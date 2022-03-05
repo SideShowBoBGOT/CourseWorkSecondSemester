@@ -3,17 +3,21 @@ from constants import MAP_SIZE
 from game_objects import Player, Battleship, Game
 
 pygame.init()
+pygame.font.init()
 pygame.display.set_caption("Battleship")
+font = pygame.font.SysFont("fresansttf", 100)
 
 # global variables
 
 SQ_SIZE = 30
+INDENT = 8
 H_MARGIN = SQ_SIZE * 4
 V_MARGIN = SQ_SIZE
 WIDTH = SQ_SIZE * MAP_SIZE * 2 + H_MARGIN
 HEIGHT = SQ_SIZE * MAP_SIZE * 2 + V_MARGIN
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
-INDENT = 8
+HUMAN1 = True
+HUMAN2 = False
 
 # COLORS
 GREY = (40, 50, 60)
@@ -54,7 +58,7 @@ def draw_ships(player, left=0, top=0):
 
 
 # pygame loop
-game = Game()
+game = Game(HUMAN1, HUMAN2)
 
 run = True
 pause = False
@@ -65,7 +69,7 @@ while run:
             exit()
 
         # user mouse clicks
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and not game.over:
             x, y = pygame.mouse.get_pos()
             if game.player1_turn and x < SQ_SIZE*MAP_SIZE and y < SQ_SIZE*MAP_SIZE:
                 row = y // SQ_SIZE
@@ -78,10 +82,18 @@ while run:
                 index = row * MAP_SIZE + col
                 game.make_move(index)
         if event.type == pygame.KEYDOWN:
+
+            # escape key to close the animation
             if event.key == pygame.K_ESCAPE:
                 run = False
+            # space bar to pause and unpause the animation
             if event.key == pygame.K_SPACE:
                 pause = not pause
+
+            # return key to restart the game
+            if event.key == pygame.K_RETURN:
+                game = Game(HUMAN1, HUMAN2)
+
     if not pause:
         # draw background
         SCREEN.fill(GREY)
@@ -98,5 +110,15 @@ while run:
         # draw ships onto position grids
         draw_ships(game.player1, top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
         draw_ships(game.player2, left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
+
+        # computer moves
+        if not game.over and game.computer_turn:
+            game.basic_ai()
+
+        # game over message
+        if game.over:
+            text = "Player " + str(game.result) + " wins!"
+            textbox = font.render(text, False, GREY, WHITE)
+            SCREEN.blit(textbox, (WIDTH//2 - 240, HEIGHT//2 - 50))
 
         pygame.display.flip()

@@ -102,20 +102,27 @@ class Player:
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, human1, human2):
+        self.human1 = human1
+        self.human2 = human2
         self.player1 = Player()
         self.player2 = Player()
         self.player1_turn = True
+        self.computer_turn = True if not self.human1 else False
         self.over = False
+        self.result = None
 
     def make_move(self, i):
         player = self.player1 if self.player1_turn else self.player2
         opponent = self.player2 if self.player1_turn else self.player1
-
+        hit = False
+        # check if square had been marked as "H","S" or "M" before the click
+        if player.search[i] != "U":
+            hit = True
         # set miss "M" or hit "H" and "S" for sunken ship
-        if i in opponent.indexes:
+        elif i in opponent.indexes:
             player.search[i] = 'H'
-
+            hit = True
             # check if ship is sunk
             for ship in opponent.ships:
                 sunk = True
@@ -124,11 +131,63 @@ class Game:
                         sunk = False
                         break
                 if sunk:
+                    for i in ship.indexes:
+                        player.search[i] = 'M'
                     for i in ship.ship_indexes:
                         player.search[i] = 'S'
         else:
             player.search[i] = "M"
 
-        # change the active player
-        self.player1_turn = not self.player1_turn
+        # check if game is over
+        game_over = True
+        for i in opponent.indexes:
+            if player.search[i] == 'U':
+                game_over = False
+        self.over = game_over
+        self.result = 1 if self.player1_turn else 2
 
+        # change the active player
+        if not hit:
+            self.player1_turn = not self.player1_turn
+
+            # switch between human and computer turns
+            if (self.human1 and not self.human2) or (not self.human1 and self.human2):
+                self.computer_turn = not self.computer_turn
+
+    def random_ai(self):
+        search = self.player1.search if self.player1_turn else self.player2.search
+        unknown = [i for i, square in enumerate(search) if square == 'U']
+        if unknown:
+            random_index = random.choice(unknown)
+            self.make_move(random_index)
+
+    def basic_ai(self):
+
+        # setup
+        search = self.player1.search if self.player1_turn else self.player2.search
+        unknown = [i for i, square in enumerate(search) if square == 'U']
+        hits = [i for i, square in enumerate(search) if square == 'H']
+
+        # search in neighbourhood of hits
+        unknown_with_neighbouring_hits1 = []
+        unknown_with_neighbouring_hits2 = []
+        for u in unknown:
+            if u + 1 in hits or u - 1 in hits or u - MAP_SIZE or u + MAP_SIZE:
+                unknown_with_neighbouring_hits1.append(u)
+            if u + 2 in hits or u - 2 in hits or u - MAP_SIZE * 2 in hits or u + MAP_SIZE * 2 in hits:
+                unknown_with_neighbouring_hits2.append(u)
+        # pick "U" square with direct and level-2-neighbour both marked as "H"
+        for u in unknown:
+            if u in unknown_with_neighbouring_hits1 and u in unknown_with_neighbouring_hits2:
+                self.make_move(u)
+                return
+
+        # pick square that has neighbour marked as "H"
+        if unknown_with_neighbouring_hits1:
+            self.make_move(random.choice(unknown_with_neighbouring_hits1))
+            return
+
+        # checker board pattern
+
+        # random move
+        self.random_ai()
