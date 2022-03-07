@@ -1,5 +1,5 @@
 import random
-from constants import MAP_SIZE, SHIPS_SIZES
+from game_constants import MAP_SIZE, SHIPS_SIZES
 
 
 class Battleship:
@@ -42,13 +42,13 @@ class Battleship:
             result_indexes += top_padding
         if left_padding[0] // MAP_SIZE == indexes[0] // MAP_SIZE and top_padding[0] >= 0:
             result_indexes += top_left_padding
-        if bottom_padding[0] <= MAP_SIZE ** 2:
+        if bottom_padding[0] < MAP_SIZE ** 2:
             result_indexes += bottom_padding
-        if left_padding[0] // MAP_SIZE == indexes[0] // MAP_SIZE and bottom_padding[0] <= MAP_SIZE ** 2:
+        if left_padding[0] // MAP_SIZE == indexes[0] // MAP_SIZE and bottom_padding[0] < MAP_SIZE ** 2:
             result_indexes += bottom_left_padding
         if right_padding[0] // MAP_SIZE == indexes[0] // MAP_SIZE:
             result_indexes += right_padding
-        if right_padding[0] // MAP_SIZE == indexes[0] // MAP_SIZE and bottom_padding[0] <= MAP_SIZE ** 2:
+        if right_padding[0] // MAP_SIZE == indexes[0] // MAP_SIZE and bottom_padding[0] < MAP_SIZE ** 2:
             result_indexes += bottom_right_padding
         if right_padding[0] // MAP_SIZE == indexes[0] // MAP_SIZE and top_padding[0] >= 0:
             result_indexes += top_right_padding
@@ -59,11 +59,13 @@ class Player:
     def __init__(self):
         self.ships = []
         self.search = ['U' for _ in range(MAP_SIZE ** 2)]  # 'U' for unknown
+
         self.place_ships(sizes=SHIPS_SIZES)
         self.indexes = [
             ind for sub in list(map(lambda x: x.ship_indexes, self.ships))
             for ind in sub
         ]
+
 
     def place_ships(self, sizes):
         for size in sizes:
@@ -102,13 +104,13 @@ class Player:
 
 
 class Game:
-    def __init__(self, human1, human2):
-        self.human1 = human1
-        self.human2 = human2
+    def __init__(self, is_human1, is_human2):
+        self.is_human1 = is_human1
+        self.is_human2 = is_human2
         self.player1 = Player()
         self.player2 = Player()
         self.player1_turn = True
-        self.computer_turn = True if not self.human1 else False
+        self.computer_turn = True if not self.is_human1 else False
         self.over = False
         self.result = None
 
@@ -117,7 +119,7 @@ class Game:
         opponent = self.player2 if self.player1_turn else self.player1
         hit = False
         # check if square had been marked as "H","S" or "M" before the click
-        if player.search[i] != "U":
+        if player.search[i] != 'U':
             hit = True
         # set miss "M" or hit "H" and "S" for sunken ship
         elif i in opponent.indexes:
@@ -151,7 +153,7 @@ class Game:
             self.player1_turn = not self.player1_turn
 
             # switch between human and computer turns
-            if (self.human1 and not self.human2) or (not self.human1 and self.human2):
+            if (self.is_human1 and not self.is_human2) or (not self.is_human1 and self.is_human2):
                 self.computer_turn = not self.computer_turn
 
     def random_ai(self):
@@ -172,7 +174,7 @@ class Game:
         unknown_with_neighbouring_hits1 = []
         unknown_with_neighbouring_hits2 = []
         for u in unknown:
-            if u + 1 in hits or u - 1 in hits or u - MAP_SIZE or u + MAP_SIZE:
+            if u + 1 in hits or u - 1 in hits or u - MAP_SIZE in hits or u + MAP_SIZE in hits:
                 unknown_with_neighbouring_hits1.append(u)
             if u + 2 in hits or u - 2 in hits or u - MAP_SIZE * 2 in hits or u + MAP_SIZE * 2 in hits:
                 unknown_with_neighbouring_hits2.append(u)
@@ -188,6 +190,54 @@ class Game:
             return
 
         # checker board pattern
+        checker_board = []
+        for u in unknown:
+            row = u // MAP_SIZE
+            col = u % MAP_SIZE
+            if (row + col) % 2 == 0:
+                checker_board.append(u)
+            if checker_board:
+                self.make_move(random.choice(checker_board))
+                return
 
         # random move
         self.random_ai()
+
+
+class Button:
+    def __init__(self, pos, font, text_input, base_color, hovering_color):
+        self.x = pos[0]
+        self.y = pos[1]
+        self.font = font
+        self.base_color = base_color
+        self.hovering_color = hovering_color
+        self.text_input = text_input
+        self.text = self.font.render(self.text_input, False,
+                                     self.base_color, self.hovering_color)
+        self.text_rect = self.text.get_rect(center=(self.x, self.y))
+
+    def update(self, screen):
+        screen.blit(self.text, self.text_rect)
+
+    def check_for_input(self, position):
+        if position[0] in range(self.text_rect.left, self.text_rect.right) \
+                and position[1] in range(self.text_rect.top, self.text_rect.bottom):
+            return True
+        return False
+
+    def change_color(self, position):
+        if position[0] in range(self.text_rect.left, self.text_rect.right) \
+                and position[1] in range(self.text_rect.top, self.text_rect.bottom):
+            self.text = self.font.render(self.text_input, False, self.hovering_color)
+        else:
+            self.text = self.font.render(self.text_input, False, self.base_color)
+
+
+class ButtonShip(Button):
+    def __init__(self,  pos, font, text_input, base_color, hovering_color):
+        Button.__init__(self, pos, font, text_input, base_color, hovering_color)
+        self.switched = False
+
+    def change_color(self, position):
+        if self.switched:
+            Button.change_color(self, position)
