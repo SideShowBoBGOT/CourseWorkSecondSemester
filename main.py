@@ -3,8 +3,8 @@ import sys
 import pygame
 from game_colors import GREY, WHITE, GREEN, LIGHT_GREY, COLORS
 from game_constants import MAP_SIZE, FONT_NAME, FONT_SIZE, TITLE, \
-    SQ_SIZE, INDENT, H_MARGIN, V_MARGIN, WIDTH, HEIGHT
-from game_objects import Game, Button
+    SQ_SIZE, INDENT, H_MARGIN, V_MARGIN, WIDTH, HEIGHT, SHIPS_SIZES
+from game_objects import Game, Button, Battleship, Player, ButtonShip
 
 pygame.init()
 pygame.font.init()
@@ -20,7 +20,7 @@ def get_font(font_size):
 
 # function to draw a grid
 def draw_grid(player, left=0, top=0, search=False):
-    for i in range(MAP_SIZE**2):
+    for i in range(MAP_SIZE ** 2):
         x = left + i % MAP_SIZE * SQ_SIZE
         y = top + i // MAP_SIZE * SQ_SIZE
         square = pygame.Rect(x, y, SQ_SIZE, SQ_SIZE)
@@ -48,8 +48,8 @@ def draw_ships(player, left=0, top=0):
 
 # function to start main_menu
 def main_menu():
-    is_human1 = False
-    is_human2 = False
+    is_human1 = True
+    is_human2 = True
     while True:
         SCREEN.fill(GREY)
 
@@ -122,6 +122,85 @@ def options():
 
 def pre_play(is_human1, is_human2):
     game = Game(is_human1, is_human2)
+
+    for player in (game.player1, game.player2):
+        if player.is_human:
+            buttons = []
+            used_buttons = []
+            # create buttons
+            for i, size in enumerate(SHIPS_SIZES):
+                x = i % 4
+                y = i // 4
+                button = ButtonShip((SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
+                                     y * SQ_SIZE + SQ_SIZE), get_font(SQ_SIZE),
+                                    str(size), GREY, WHITE)
+                buttons.append(button)
+
+            while True:
+                GAME_MOUSE_POSITION = pygame.mouse.get_pos()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        # click on buttons and chose size of a ship
+                        for i1, button in enumerate(buttons):
+                            if button.check_for_input(GAME_MOUSE_POSITION):
+                                button.switched = not button.switched
+                                button.change_color(GAME_MOUSE_POSITION)
+                                for i2, other_button in enumerate(buttons):
+                                    if i2 != i1:
+                                        other_button.switched = False
+                                        other_button.change_color(GAME_MOUSE_POSITION)
+                                break
+                        # chose square to put ship onto
+                        for i1, button in enumerate(buttons):
+                            if button.switched:
+                                x, y = GAME_MOUSE_POSITION
+                                if x < SQ_SIZE * MAP_SIZE and y > SQ_SIZE * MAP_SIZE + V_MARGIN:
+                                    orientation = 'h' if pygame.mouse.get_pressed()[0] else 'v'
+                                    row = (y - SQ_SIZE * MAP_SIZE - V_MARGIN) // SQ_SIZE
+                                    col = x // SQ_SIZE
+                                    ship = Battleship(size=int(button.text_input), row=row,
+                                                      col=col, orientation=orientation)
+                                    if player.check_ship(ship):
+                                        player.ships.append(ship)
+                                        used_buttons.append(buttons.pop(i1))
+                                        for i2, other_button in enumerate(buttons):
+                                            x = i2 % 4
+                                            y = i2 // 4
+                                            other_button.text_rect = other_button.text.get_rect(center=
+                                                (SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
+                                                y * SQ_SIZE + SQ_SIZE))
+                                break
+                            # chose ship to be replaced
+                            for i, ship in player.ships:
+                                x, y = GAME_MOUSE_POSITION
+                                if x < SQ_SIZE * MAP_SIZE and y > SQ_SIZE * MAP_SIZE + V_MARGIN:
+                                    row = (y - SQ_SIZE * MAP_SIZE - V_MARGIN) // SQ_SIZE
+                                    col = x // SQ_SIZE
+                                    index = row * MAP_SIZE + col
+                                    if index in ship.ship_indexes:
+                                        ...
+
+
+                SCREEN.fill(GREY)
+                # draw search grids
+                draw_grid(player=None)
+                draw_grid(player=None, left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
+                          top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+                # draw buttons
+                for button in buttons:
+                    button.update(SCREEN)
+                # draw position grids
+                draw_grid(player=None, top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+                draw_grid(player=None, left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
+
+                # draw ships onto position grids
+                draw_ships(player, top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+                pygame.display.update()
+
     play(game)
 
 

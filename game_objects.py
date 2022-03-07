@@ -3,11 +3,11 @@ from game_constants import MAP_SIZE, SHIPS_SIZES
 
 
 class Battleship:
-    def __init__(self, size):
-        self.row = random.randint(0, MAP_SIZE - 1)
-        self.col = random.randint(0, MAP_SIZE - 1)
+    def __init__(self, size, row, col, orientation):
+        self.row = row
+        self.col = col
         self.size = size
-        self.orientation = random.choice(["h", "v"])
+        self.orientation = orientation
         self.indexes = self.compute_indexes()
         self.ship_indexes = self.indexes[:size]
 
@@ -56,44 +56,51 @@ class Battleship:
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, is_human):
         self.ships = []
         self.search = ['U' for _ in range(MAP_SIZE ** 2)]  # 'U' for unknown
-
-        self.place_ships(sizes=SHIPS_SIZES)
+        self.is_human = is_human
+        if not self.is_human:
+            self.place_ships(sizes=SHIPS_SIZES)
         self.indexes = [
             ind for sub in list(map(lambda x: x.ship_indexes, self.ships))
             for ind in sub
         ]
 
+    # check if placement of the ship is possible
+    def check_ship(self, ship):
+        possible = True
+        size = ship.size
+        for i in ship.indexes[:size]:
+            # indexes must be less than MAP_SIZE**2
+            if i >= MAP_SIZE ** 2:
+                possible = False
+                break
+            # ships cannot go beyond grid
+            new_row = i // MAP_SIZE
+            if ship.orientation == 'h' and new_row != ship.row:
+                possible = False
+                break
+            # ships cannot intersect
+            for other_ship in self.ships:
+                if i in other_ship.indexes:
+                    possible = False
+                    break
+            if not possible:
+                break
+        return possible
 
+    # place player`s ship onto the board
     def place_ships(self, sizes):
         for size in sizes:
             placed = False
             while not placed:
                 # create new ship
-                ship = Battleship(size)
-                # check if placement is possible
-                possible = True
-                for i in ship.indexes[:size]:
-                    # indexes must be less than MAP_SIZE**2
-                    if i >= MAP_SIZE ** 2:
-                        possible = False
-                        break
-                    # ships cannot go beyond grid
-                    new_row = i // MAP_SIZE
-                    if ship.orientation == 'h' and new_row != ship.row:
-                        possible = False
-                        break
-                    # ships cannot intersect
-                    for other_ship in self.ships:
-                        if i in other_ship.indexes:
-                            possible = False
-                            break
-                    if not possible:
-                        break
+                ship = Battleship(size=size, row=random.randint(0, MAP_SIZE - 1),
+                                  col=random.randint(0, MAP_SIZE - 1),
+                                  orientation=random.choice(["h", "v"]))
                 # place the ship
-                if possible:
+                if self.check_ship(ship):
                     self.ships.append(ship)
                     placed = True
 
@@ -105,12 +112,10 @@ class Player:
 
 class Game:
     def __init__(self, is_human1, is_human2):
-        self.is_human1 = is_human1
-        self.is_human2 = is_human2
-        self.player1 = Player()
-        self.player2 = Player()
+        self.player1 = Player(is_human1)
+        self.player2 = Player(is_human2)
         self.player1_turn = True
-        self.computer_turn = True if not self.is_human1 else False
+        self.computer_turn = True if not self.player1.is_human else False
         self.over = False
         self.result = None
 
@@ -153,7 +158,8 @@ class Game:
             self.player1_turn = not self.player1_turn
 
             # switch between human and computer turns
-            if (self.is_human1 and not self.is_human2) or (not self.is_human1 and self.is_human2):
+            if (self.player1.is_human and not self.player2.is_human) or (
+                    not self.player1.is_human and self.player2.is_human):
                 self.computer_turn = not self.computer_turn
 
     def random_ai(self):
@@ -234,10 +240,14 @@ class Button:
 
 
 class ButtonShip(Button):
-    def __init__(self,  pos, font, text_input, base_color, hovering_color):
+    def __init__(self, pos, font, text_input, base_color, hovering_color):
         Button.__init__(self, pos, font, text_input, base_color, hovering_color)
         self.switched = False
 
     def change_color(self, position):
-        if self.switched:
-            Button.change_color(self, position)
+        if position[0] in range(self.text_rect.left, self.text_rect.right) \
+                and position[1] in range(self.text_rect.top, self.text_rect.bottom) \
+                and self.switched:
+            self.text = self.font.render(self.text_input, False, self.hovering_color, self.base_color)
+        elif not self.switched:
+            self.text = self.font.render(self.text_input, False, self.base_color, self.hovering_color)
