@@ -1,5 +1,42 @@
 import random
-from game_constants import MAP_SIZE, SHIPS_SIZES
+import pygame
+from game_colors import WHITE, GREEN, COLORS
+from game_constants import MAP_SIZE, SHIPS_SIZES, SQ_SIZE, INDENT
+
+
+class Grid:
+    def __init__(self, screen, player, left=0, top=0):
+        self.screen = screen
+        self.player = player
+        self.left = left
+        self.top = top
+
+    def draw_grid(self, search=False):
+        for i in range(MAP_SIZE ** 2):
+            x = self.left + i % MAP_SIZE * SQ_SIZE
+            y = self.top + i // MAP_SIZE * SQ_SIZE
+            square = pygame.Rect(x, y, SQ_SIZE, SQ_SIZE)
+            pygame.draw.rect(self.screen, WHITE, square, width=3)
+            if search:
+                x += SQ_SIZE // 2
+                y += SQ_SIZE // 2
+                pygame.draw.circle(self.screen,
+                                   COLORS[self.player.search[i]],
+                                   (x, y), radius=SQ_SIZE // 4)
+
+    # function to draw ships onto the position grids
+    def draw_ships(self):
+        for ship in self.player.ships:
+            x = self.left + ship.col * SQ_SIZE + INDENT
+            y = self.top + ship.row * SQ_SIZE + INDENT
+            if ship.orientation == 'h':
+                width = ship.size * SQ_SIZE - INDENT * 2
+                height = SQ_SIZE - INDENT * 2
+            elif ship.orientation == 'v':
+                width = SQ_SIZE - INDENT * 2
+                height = ship.size * SQ_SIZE - INDENT * 2
+            rectangle = pygame.Rect(x, y, width, height)
+            pygame.draw.rect(self.screen, GREEN, rectangle, border_radius=15)
 
 
 class Battleship:
@@ -211,7 +248,7 @@ class Game:
 
 
 class Button:
-    def __init__(self, pos, font, text_input, base_color, hovering_color):
+    def __init__(self, pos, font, text_input, base_color, hovering_color, func):
         self.x = pos[0]
         self.y = pos[1]
         self.font = font
@@ -221,6 +258,7 @@ class Button:
         self.text = self.font.render(self.text_input, False,
                                      self.base_color, self.hovering_color)
         self.text_rect = self.text.get_rect(center=(self.x, self.y))
+        self.func = func
 
     def update(self, screen):
         screen.blit(self.text, self.text_rect)
@@ -239,9 +277,9 @@ class Button:
             self.text = self.font.render(self.text_input, False, self.base_color)
 
 
-class ButtonShip(Button):
-    def __init__(self, pos, font, text_input, base_color, hovering_color):
-        Button.__init__(self, pos, font, text_input, base_color, hovering_color)
+class TumblerButton(Button):
+    def __init__(self, pos, font, text_input, base_color, hovering_color, func):
+        Button.__init__(self, pos, font, text_input, base_color, hovering_color, func)
         self.switched = False
 
     def change_color(self, position):
