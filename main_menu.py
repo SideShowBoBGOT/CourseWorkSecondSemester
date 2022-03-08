@@ -17,6 +17,10 @@ class Menu:
                                              text_input=button[1][0],
                                              font=get_font(FONT_SIZE), base_color=WHITE,
                                              hovering_color=LIGHT_GREY, func=func))
+        self.buttons.append(Button(pos=(WIDTH // 2, HEIGHT // 3 + FONT_SIZE * (button[0] + 1)),
+                                   text_input='QUIT',
+                                   font=get_font(FONT_SIZE), base_color=WHITE,
+                                   hovering_color=LIGHT_GREY, func=None))
 
     def draw(self, **kwargs):
         while True:
@@ -33,7 +37,9 @@ class Menu:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     for button in self.buttons:
                         if button.check_for_input(mouse_pos):
-                            if button.__class__.__name__ == Button.__name__:
+                            if button.text_input == 'QUIT':
+                                return
+                            elif button.__class__.__name__ == Button.__name__:
                                 button.func(**(kwargs[button.text_input]))
                             elif button.__class__.__name__ == TumblerButton.__name__:
                                 button.switched = not button.switched

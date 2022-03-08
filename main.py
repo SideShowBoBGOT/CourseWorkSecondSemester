@@ -15,9 +15,8 @@ SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 OPTIONS_MENU_TEXT = 'OPTIONS'
 OPTIONS_MENU_BUTTONS = [['PLAYER1', TumblerButton],
-                        ['PLAYER2', TumblerButton],
-                        ['QUIT', Button]]
-OPTIONS_MENU_FUNCS = [None, None, lambda: None]
+                        ['PLAYER2', TumblerButton]]
+OPTIONS_MENU_FUNCS = [None, None]
 options_menu = Menu(screen=SCREEN, text=OPTIONS_MENU_TEXT,
                     buttons=OPTIONS_MENU_BUTTONS,
                     funcs=OPTIONS_MENU_FUNCS)
@@ -32,4 +31,4 @@ main_menu = Menu(screen=SCREEN, text=MAIN_MENU_TEXT,
                  funcs=MAIN_MENU_FUNCS)
 
 main_menu.draw(PLAY={'screen': SCREEN, 'is_human1': is_human1, 'is_human2': is_human2},
-               OPTIONS={'QUIT': None})
+               OPTIONS={'None': None})
