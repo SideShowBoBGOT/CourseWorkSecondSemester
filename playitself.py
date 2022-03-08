@@ -1,14 +1,14 @@
 import sys
 import pygame
 from game_colors import GREY, WHITE
-from game_constants import MAP_SIZE, FONT_SIZE, TITLE, \
-    SQ_SIZE, INDENT, H_MARGIN, V_MARGIN, WIDTH, HEIGHT, SHIPS_SIZES
-from game_objects import Game, Grid, Button, Battleship, Player, TumblerButton
+from game_constants import MAP_SIZE, FONT_SIZE, \
+    SQ_SIZE, H_MARGIN, V_MARGIN, WIDTH, HEIGHT, SHIPS_SIZES
+from game_classes import Game, Grid, Button, Battleship, Player, TumblerButton
 from other_functions import get_font
 
 
-def pre_play(screen, is_human1, is_human2):
-    game = Game(is_human1, is_human2)
+def pre_play(screen, options_menu):
+    game = Game(options_menu.buttons[0].switched, options_menu.buttons[1].switched)
 
     for player in (game.player1, game.player2):
         if player.is_human:
@@ -20,7 +20,7 @@ def pre_play(screen, is_human1, is_human2):
                 y = i // 4
                 button = TumblerButton((SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
                                         y * SQ_SIZE + SQ_SIZE), get_font(SQ_SIZE),
-                                       str(size), GREY, WHITE)
+                                       str(size), GREY, WHITE, None)
                 buttons.append(button)
 
             while True:
@@ -151,12 +151,12 @@ def play(screen, game):
         if not pause:
             screen.fill(GREY)
             # draw_grid search grids
-            search_grid1 = Grid(screen=screen, player=None)
-            search_grid2 = Grid(screen=screen, player=None,
+            search_grid1 = Grid(screen=screen, player=game.player1)
+            search_grid2 = Grid(screen=screen, player=game.player2,
                                 left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
                                 top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
-            search_grid1.draw_grid()
-            search_grid2.draw_grid()
+            search_grid1.draw_grid(search=True)
+            search_grid2.draw_grid(search=True)
             # draw_grid position grids
             position_grid1 = Grid(screen=screen, player=game.player1,
                                   top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)

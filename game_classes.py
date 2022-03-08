@@ -1,7 +1,9 @@
 import random
+import sys
 import pygame
-from game_colors import WHITE, GREEN, COLORS
-from game_constants import MAP_SIZE, SHIPS_SIZES, SQ_SIZE, INDENT
+from game_colors import WHITE, GREEN, GREY, LIGHT_GREY, COLORS
+from game_constants import MAP_SIZE, SHIPS_SIZES, SQ_SIZE, INDENT, FONT_SIZE, WIDTH, HEIGHT
+from other_functions import get_font
 
 
 class Grid:
@@ -289,3 +291,43 @@ class TumblerButton(Button):
             self.text = self.font.render(self.text_input, False, self.hovering_color, self.base_color)
         elif not self.switched:
             self.text = self.font.render(self.text_input, False, self.base_color, self.hovering_color)
+
+
+class Menu:
+    def __init__(self, screen, text, buttons, funcs):
+        self.screen = screen
+        self.text = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
+        self.rect = self.text.get_rect(center=(WIDTH // 2, HEIGHT // 5))
+        self.buttons = []
+        for button, func in zip(enumerate(buttons), funcs):
+            self.buttons.append(button[1][1](pos=(WIDTH // 2, HEIGHT // 3 + FONT_SIZE * button[0]),
+                                             text_input=button[1][0],
+                                             font=get_font(FONT_SIZE), base_color=WHITE,
+                                             hovering_color=LIGHT_GREY, func=func))
+        self.buttons.append(Button(pos=(WIDTH // 2, HEIGHT // 3 + FONT_SIZE * (button[0] + 1)),
+                                   text_input='QUIT',
+                                   font=get_font(FONT_SIZE), base_color=WHITE,
+                                   hovering_color=LIGHT_GREY, func=None))
+
+    def draw(self, **kwargs):
+        while True:
+            self.screen.fill(GREY)
+            self.screen.blit(self.text, self.rect)
+            mouse_pos = pygame.mouse.get_pos()
+            for button in self.buttons:
+                button.change_color(mouse_pos)
+                button.update(self.screen)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    for button in self.buttons:
+                        if button.check_for_input(mouse_pos):
+                            if button.text_input == 'QUIT':
+                                return
+                            elif button.__class__.__name__ == Button.__name__:
+                                button.func(**(kwargs[button.text_input]))
+                            elif button.__class__.__name__ == TumblerButton.__name__:
+                                button.switched = not button.switched
+            pygame.display.update()
