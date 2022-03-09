@@ -28,6 +28,17 @@ class Grid:
                                    COLORS[self.player.search[i]],
                                    (x, y), radius=SQ_SIZE // 4)
 
+    def check_for_input(self, position):
+        x1, y1 = self.left, self.top
+        x2 = self.left + (MAP_SIZE ** 2 - 1) % MAP_SIZE * SQ_SIZE
+        y2 = self.top + (MAP_SIZE ** 2 - 1) // MAP_SIZE * SQ_SIZE
+        top_left_square = pygame.Rect(x1, y1, SQ_SIZE, SQ_SIZE)
+        bottom_right_square = pygame.Rect(x2, y2, SQ_SIZE, SQ_SIZE)
+        if position[0] in range(top_left_square.left, bottom_right_square.right) \
+                and position[1] in range(top_left_square.top, bottom_right_square.bottom):
+            return True
+        return False
+
     # function to draw ships onto the position grids
     def draw_ships(self):
         for ship in self.player.ships:
@@ -103,10 +114,10 @@ class Player:
         self.is_human = is_human
         if not self.is_human:
             self.place_ships_ai(sizes=SHIPS_SIZES)
-        self.indexes = [
-            ind for sub in list(map(lambda x: x.ship_indexes, self.ships))
-            for ind in sub
-        ]
+            self.indexes = [
+                ind for sub in list(map(lambda x: x.ship_indexes, self.ships))
+                for ind in sub
+            ]
 
     # check if placement of the ship is possible
     def check_ship(self, ship):
@@ -286,7 +297,6 @@ class TumblerButton(Button):
         Button.__init__(self, pos, font, text_input, base_color, hovering_color, func)
         self.switched = False
 
-
     def change_color(self, position):
         if self.switched:
             self.text = self.font.render(self.text_input, False, self.hovering_color, self.base_color)
@@ -367,6 +377,12 @@ class Board:
         self.position_grid1.draw_ships()
         self.position_grid2.draw_ships()
 
+    def check_for_input(self, position, player_number):
+        if player_number == 1:
+            self.search_grid1.check_for_input(position)
+        elif player_number == 2:
+            self.search_grid2.check_for_input(position)
+
 
 class Game:
     def __init__(self, screen, options_menu):
@@ -376,12 +392,13 @@ class Game:
         self.board = None
 
     def prepare_to_play(self):
-
+        # set game_logic and board for game
         self.game_logic = GameLogic(self.options_menu.buttons[0].switched,
                                     self.options_menu.buttons[1].switched)
         self.board = Board(self.screen, self.options_menu, self.game_logic)
-
+        # check if player is human
         for player in (self.game_logic.player1, self.game_logic.player2):
+            # if human then player must place its ships onto the board
             if player.is_human:
                 buttons, used_buttons = [], []
                 set_button = TumblerButton(pos=(WIDTH // 2, SQ_SIZE * MAP_SIZE),
@@ -401,7 +418,11 @@ class Game:
                         if event.type == pygame.QUIT:
                             pygame.quit()
                             sys.exit()
+                        # escape key to close the animation
+                        if event.type == pygame.K_ESCAPE:
+                            return
                         if event.type == pygame.MOUSEBUTTONDOWN:
+                            # check if set_button is pressed
                             if set_button.check_for_input(GAME_MOUSE_POSITION):
                                 set_button.switched = not set_button.switched
                             # click on buttons and chose size of a ship
@@ -460,9 +481,17 @@ class Game:
                                             player.ships.pop(i1)
 
                     self.board.draw(buttons=buttons)
+                    # while all player`s ships are not placed, it can not start game
                     if not buttons:
                         set_button.update(self.screen)
+
                     pygame.display.update()
+                # player`s ships being placed, program sets player`s indexes
+                player.indexes = [
+                    ind for sub in list(map(lambda x: x.ship_indexes, player.ships))
+                    for ind in sub
+                ]
+
         self.play()
 
     def play(self):
@@ -495,12 +524,6 @@ class Game:
                     # space bar to pause and unpause the animation
                     if event.key == pygame.K_SPACE and not self.game_logic.over:
                         pause = not pause
-
-                    # return key to restart the game
-                    if event.key == pygame.K_RETURN:
-                        self.game_logic = GameLogic(self.options_menu.buttons[0].switched,
-                                                    self.options_menu.buttons[1].switched)
-                        self.board = Board(self.screen, self.options_menu, self.game_logic)
 
             if not pause:
                 self.board.draw()
