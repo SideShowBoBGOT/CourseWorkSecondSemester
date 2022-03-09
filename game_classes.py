@@ -286,12 +286,11 @@ class TumblerButton(Button):
         Button.__init__(self, pos, font, text_input, base_color, hovering_color, func)
         self.switched = False
 
+
     def change_color(self, position):
-        if position[0] in range(self.text_rect.left, self.text_rect.right) \
-                and position[1] in range(self.text_rect.top, self.text_rect.bottom) \
-                and self.switched:
+        if self.switched:
             self.text = self.font.render(self.text_input, False, self.hovering_color, self.base_color)
-        elif not self.switched:
+        else:
             self.text = self.font.render(self.text_input, False, self.base_color, self.hovering_color)
 
 
@@ -373,28 +372,38 @@ class Game:
     def __init__(self, screen, options_menu):
         self.screen = screen
         self.options_menu = options_menu
+        self.game_logic = None
+        self.board = None
+
+    def prepare_to_play(self):
+
         self.game_logic = GameLogic(self.options_menu.buttons[0].switched,
                                     self.options_menu.buttons[1].switched)
         self.board = Board(self.screen, self.options_menu, self.game_logic)
 
-    def prepare_to_play(self):
         for player in (self.game_logic.player1, self.game_logic.player2):
             if player.is_human:
                 buttons, used_buttons = [], []
+                set_button = TumblerButton(pos=(WIDTH // 2, SQ_SIZE * MAP_SIZE),
+                                           text_input='SET SHIPS', font=get_font(FONT_SIZE // 2),
+                                           base_color=WHITE, hovering_color=LIGHT_GREY, func=None)
                 for i, size in enumerate(SHIPS_SIZES):
                     x = i % 4
                     y = i // 4
-                    button = TumblerButton((SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
-                                            y * SQ_SIZE + SQ_SIZE), get_font(SQ_SIZE),
-                                           str(size), GREY, WHITE, None)
+                    button = TumblerButton(pos=(SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
+                                                y * SQ_SIZE + SQ_SIZE), font=get_font(SQ_SIZE),
+                                           text_input=str(size), base_color=GREY, hovering_color=WHITE,
+                                           func=None)
                     buttons.append(button)
-                while True:
+                while not set_button.switched:
                     GAME_MOUSE_POSITION = pygame.mouse.get_pos()
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
                             pygame.quit()
                             sys.exit()
                         if event.type == pygame.MOUSEBUTTONDOWN:
+                            if set_button.check_for_input(GAME_MOUSE_POSITION):
+                                set_button.switched = not set_button.switched
                             # click on buttons and chose size of a ship
                             for i1, button in enumerate(buttons):
                                 if button.check_for_input(GAME_MOUSE_POSITION):
@@ -449,7 +458,10 @@ class Game:
                                                     SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
                                                     y * SQ_SIZE + SQ_SIZE))
                                             player.ships.pop(i1)
+
                     self.board.draw(buttons=buttons)
+                    if not buttons:
+                        set_button.update(self.screen)
                     pygame.display.update()
         self.play()
 

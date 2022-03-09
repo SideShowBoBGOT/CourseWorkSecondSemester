@@ -1,7 +1,6 @@
 import pygame
 from game_constants import TITLE, WIDTH, HEIGHT
 from game_classes import Button, TumblerButton, Menu, Game
-from playitself import pre_play
 
 pygame.init()
 pygame.font.init()
@@ -19,6 +18,8 @@ OPTIONS_MENU_FUNCS = [None, None]
 options_menu = Menu(screen=SCREEN, text=OPTIONS_MENU_TEXT,
                     buttons=OPTIONS_MENU_BUTTONS,
                     funcs=OPTIONS_MENU_FUNCS)
+options_menu.buttons[0].switched = False
+options_menu.buttons[1].switched = False
 
 game = Game(screen=SCREEN, options_menu=options_menu)
 
