@@ -1,6 +1,6 @@
 import pygame
 from game_constants import TITLE, WIDTH, HEIGHT
-from game_classes import Button, TumblerButton, Menu
+from game_classes import Button, TumblerButton, Menu, Game
 from playitself import pre_play
 
 pygame.init()
@@ -20,14 +20,16 @@ options_menu = Menu(screen=SCREEN, text=OPTIONS_MENU_TEXT,
                     buttons=OPTIONS_MENU_BUTTONS,
                     funcs=OPTIONS_MENU_FUNCS)
 
+game = Game(screen=SCREEN, options_menu=options_menu)
+
 MAIN_MENU_TEXT = 'MAIN MENU'
 MAIN_MENU_BUTTONS = [['PLAY', Button],
                      ['OPTIONS', Button]]
-MAIN_MENU_FUNCS = [pre_play, options_menu.draw]
+MAIN_MENU_FUNCS = [game.prepare_to_play, options_menu.draw]
 
 main_menu = Menu(screen=SCREEN, text=MAIN_MENU_TEXT,
                  buttons=MAIN_MENU_BUTTONS,
                  funcs=MAIN_MENU_FUNCS)
 
-main_menu.draw(PLAY={'screen': SCREEN, 'options_menu': options_menu},
-               OPTIONS={'None': None})
+main_menu.draw(PLAY={'None': None}, OPTIONS={'None': None})
+

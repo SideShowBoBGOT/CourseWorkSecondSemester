@@ -1,8 +1,10 @@
 import random
+import inspect
 import sys
 import pygame
 from game_colors import WHITE, GREEN, GREY, LIGHT_GREY, COLORS
-from game_constants import MAP_SIZE, SHIPS_SIZES, SQ_SIZE, INDENT, FONT_SIZE, WIDTH, HEIGHT
+from game_constants import MAP_SIZE, SHIPS_SIZES, SQ_SIZE, \
+    INDENT, FONT_SIZE, WIDTH, HEIGHT, H_MARGIN, V_MARGIN
 from other_functions import get_font
 
 
@@ -100,7 +102,7 @@ class Player:
         self.search = ['U' for _ in range(MAP_SIZE ** 2)]  # 'U' for unknown
         self.is_human = is_human
         if not self.is_human:
-            self.place_ships(sizes=SHIPS_SIZES)
+            self.place_ships_ai(sizes=SHIPS_SIZES)
         self.indexes = [
             ind for sub in list(map(lambda x: x.ship_indexes, self.ships))
             for ind in sub
@@ -130,7 +132,7 @@ class Player:
         return possible
 
     # place player`s ship onto the board
-    def place_ships(self, sizes):
+    def place_ships_ai(self, sizes):
         for size in sizes:
             placed = False
             while not placed:
@@ -149,7 +151,7 @@ class Player:
             print(' '.join(indexes[(row - 1) * MAP_SIZE:row * MAP_SIZE]))
 
 
-class Game:
+class GameLogic:
     def __init__(self, is_human1, is_human2):
         self.player1 = Player(is_human1)
         self.player2 = Player(is_human2)
@@ -327,7 +329,181 @@ class Menu:
                             if button.text_input == 'QUIT':
                                 return
                             elif button.__class__.__name__ == Button.__name__:
-                                button.func(**(kwargs[button.text_input]))
+                                if inspect.signature(button.func).parameters:
+                                    button.func(**(kwargs[button.text_input]))
+                                else:
+                                    button.func()
                             elif button.__class__.__name__ == TumblerButton.__name__:
                                 button.switched = not button.switched
+            pygame.display.update()
+
+
+class Board:
+    def __init__(self, screen, options_menu, game_logic):
+        self.screen = screen
+        self.game = game_logic
+        self.options_menu = options_menu
+        self.search_grid1 = Grid(screen=self.screen, player=self.game.player1)
+        self.search_grid2 = Grid(screen=self.screen, player=self.game.player2,
+                                 left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
+                                 top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+        self.position_grid1 = Grid(screen=self.screen, player=self.game.player1,
+                                   top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+        self.position_grid2 = Grid(screen=self.screen, player=self.game.player2,
+                                   left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
+
+    def draw(self, buttons=None):
+        self.screen.fill(GREY)
+        # draw_grid search grids
+        self.search_grid1.draw_grid(search=True)
+        self.search_grid2.draw_grid(search=True)
+        # draw_grid buttons
+        if buttons:
+            for button in buttons:
+                button.update(self.screen)
+        # draw_grid position grids
+        self.position_grid1.draw_grid()
+        self.position_grid2.draw_grid()
+        # draw_grid ships onto position grids
+        self.position_grid1.draw_ships()
+        self.position_grid2.draw_ships()
+
+
+class Game:
+    def __init__(self, screen, options_menu):
+        self.screen = screen
+        self.options_menu = options_menu
+        self.game_logic = GameLogic(self.options_menu.buttons[0].switched,
+                                    self.options_menu.buttons[1].switched)
+        self.board = Board(self.screen, self.options_menu, self.game_logic)
+
+    def prepare_to_play(self):
+        for player in (self.game_logic.player1, self.game_logic.player2):
+            if player.is_human:
+                buttons, used_buttons = [], []
+                for i, size in enumerate(SHIPS_SIZES):
+                    x = i % 4
+                    y = i // 4
+                    button = TumblerButton((SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
+                                            y * SQ_SIZE + SQ_SIZE), get_font(SQ_SIZE),
+                                           str(size), GREY, WHITE, None)
+                    buttons.append(button)
+                while True:
+                    GAME_MOUSE_POSITION = pygame.mouse.get_pos()
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            sys.exit()
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            # click on buttons and chose size of a ship
+                            for i1, button in enumerate(buttons):
+                                if button.check_for_input(GAME_MOUSE_POSITION):
+                                    button.switched = not button.switched
+                                    button.change_color(GAME_MOUSE_POSITION)
+                                    for i2, other_button in enumerate(buttons):
+                                        if i2 != i1:
+                                            other_button.switched = False
+                                            other_button.change_color(GAME_MOUSE_POSITION)
+                                    break
+                            # chose square to put ship onto
+                            for i1, button in enumerate(buttons):
+                                if button.switched:
+                                    x, y = GAME_MOUSE_POSITION
+                                    if x < SQ_SIZE * MAP_SIZE and y > SQ_SIZE * MAP_SIZE + V_MARGIN:
+                                        orientation = 'h' if pygame.mouse.get_pressed()[0] else 'v'
+                                        row = (y - SQ_SIZE * MAP_SIZE - V_MARGIN) // SQ_SIZE
+                                        col = x // SQ_SIZE
+                                        ship = Battleship(size=int(button.text_input), row=row,
+                                                          col=col, orientation=orientation)
+                                        if player.check_ship(ship):
+                                            player.ships.append(ship)
+                                            used_buttons.append(buttons.pop(i1))
+                                            for i2, other_button in enumerate(buttons):
+                                                x = i2 % 4
+                                                y = i2 // 4
+                                                other_button.text_rect = other_button.text.get_rect(center=
+                                                (
+                                                    SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
+                                                    y * SQ_SIZE + SQ_SIZE))
+                                    break
+                                # chose ship to be replaced
+                                for i1, ship in enumerate(player.ships):
+                                    x, y = GAME_MOUSE_POSITION
+                                    if x < SQ_SIZE * MAP_SIZE and y > SQ_SIZE * MAP_SIZE + V_MARGIN:
+                                        row = (y - SQ_SIZE * MAP_SIZE - V_MARGIN) // SQ_SIZE
+                                        col = x // SQ_SIZE
+                                        index = row * MAP_SIZE + col
+                                        if index in ship.ship_indexes:
+                                            for i2, used_button in enumerate(used_buttons):
+                                                if ship.size == int(used_button.text_input):
+                                                    used_button.switched = False
+                                                    used_button.change_color(GAME_MOUSE_POSITION)
+                                                    buttons.append(used_buttons.pop(i2))
+                                                    break
+                                            buttons.sort(key=lambda x: int(x.text_input), reverse=True)
+                                            for i3, button in enumerate(buttons):
+                                                x = i3 % 4
+                                                y = i3 // 4
+                                                button.text_rect = button.text.get_rect(center=
+                                                (
+                                                    SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
+                                                    y * SQ_SIZE + SQ_SIZE))
+                                            player.ships.pop(i1)
+                    self.board.draw(buttons=buttons)
+                    pygame.display.update()
+        self.play()
+
+    def play(self):
+        pause = False
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                # user mouse clicks
+                if event.type == pygame.MOUSEBUTTONDOWN and not pause:
+                    x, y = pygame.mouse.get_pos()
+                    if not self.game_logic.over:
+                        if self.game_logic.player1_turn and x < SQ_SIZE * MAP_SIZE and y < SQ_SIZE * MAP_SIZE:
+                            row = y // SQ_SIZE
+                            col = x // SQ_SIZE
+                            index = row * MAP_SIZE + col
+                            self.game_logic.make_move(index)
+                        elif not self.game_logic.player1_turn and x > WIDTH - SQ_SIZE * MAP_SIZE and y > SQ_SIZE * MAP_SIZE + V_MARGIN:
+                            row = (y - SQ_SIZE * MAP_SIZE - V_MARGIN) // SQ_SIZE
+                            col = (x - SQ_SIZE * MAP_SIZE - H_MARGIN) // SQ_SIZE
+                            index = row * MAP_SIZE + col
+                            self.game_logic.make_move(index)
+                if event.type == pygame.KEYDOWN:
+
+                    # escape key to close the animation
+                    if event.key == pygame.K_ESCAPE:
+                        return
+                    # space bar to pause and unpause the animation
+                    if event.key == pygame.K_SPACE and not self.game_logic.over:
+                        pause = not pause
+
+                    # return key to restart the game
+                    if event.key == pygame.K_RETURN:
+                        self.game_logic = GameLogic(self.options_menu.buttons[0].switched,
+                                                    self.options_menu.buttons[1].switched)
+                        self.board = Board(self.screen, self.options_menu, self.game_logic)
+
+            if not pause:
+                self.board.draw()
+                # computer moves
+                if not self.game_logic.over and self.game_logic.computer_turn:
+                    self.game_logic.basic_ai()
+
+                # game over message
+                if self.game_logic.over:
+                    text = "Player " + str(self.game_logic.result) + " wins!"
+                    textbox = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
+                    self.screen.blit(textbox, (WIDTH // 5, HEIGHT // 2.22))
+            elif pause and not self.game_logic.over:
+                text = "Pause"
+                textbox = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
+                self.screen.blit(textbox, (WIDTH // 2.7, HEIGHT // 2.22))
+            pygame.time.delay(0)
             pygame.display.update()

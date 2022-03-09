@@ -3,33 +3,59 @@ import pygame
 from game_colors import GREY, WHITE
 from game_constants import MAP_SIZE, FONT_SIZE, \
     SQ_SIZE, H_MARGIN, V_MARGIN, WIDTH, HEIGHT, SHIPS_SIZES
-from game_classes import Game, Grid, Button, Battleship, Player, TumblerButton
+from game_classes import GameLogic, Grid, Button, Battleship, Player, TumblerButton
 from other_functions import get_font
 
 
-def pre_play(screen, options_menu):
-    game = Game(options_menu.buttons[0].switched, options_menu.buttons[1].switched)
+def draw_board(screen, search_grid1, search_grid2, position_grid1, position_grid2, buttons=None):
+    screen.fill(GREY)
+    # draw_grid search grids
+    search_grid1.draw_grid(search=True)
+    search_grid2.draw_grid(search=True)
+    # draw_grid buttons
+    if buttons:
+        for button in buttons:
+            button.update(screen)
+    # draw_grid position grids
+    position_grid1.draw_grid()
+    position_grid2.draw_grid()
+    # draw_grid ships onto position grids
+    position_grid1.draw_ships()
+    position_grid2.draw_ships()
 
+
+def create_ship_number_buttons(ships_sizes):
+    buttons = []
+    for i, size in enumerate(ships_sizes):
+        x = i % 4
+        y = i // 4
+        button = TumblerButton((SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
+                                y * SQ_SIZE + SQ_SIZE), get_font(SQ_SIZE),
+                               str(size), GREY, WHITE, None)
+        buttons.append(button)
+    return buttons
+
+
+def pre_play(screen, options_menu):
+    game = GameLogic(options_menu.buttons[0].switched, options_menu.buttons[1].switched)
+    search_grid1 = Grid(screen=screen, player=game.player1)
+    search_grid2 = Grid(screen=screen, player=game.player2,
+                        left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
+                        top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+    position_grid1 = Grid(screen=screen, player=game.player1,
+                          top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+    position_grid2 = Grid(screen=screen, player=game.player2,
+                          left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
     for player in (game.player1, game.player2):
         if player.is_human:
-            buttons = []
+            buttons = create_ship_number_buttons(SHIPS_SIZES)
             used_buttons = []
-            # create buttons
-            for i, size in enumerate(SHIPS_SIZES):
-                x = i % 4
-                y = i // 4
-                button = TumblerButton((SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
-                                        y * SQ_SIZE + SQ_SIZE), get_font(SQ_SIZE),
-                                       str(size), GREY, WHITE, None)
-                buttons.append(button)
-
             while True:
                 GAME_MOUSE_POSITION = pygame.mouse.get_pos()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
-
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         # click on buttons and chose size of a ship
                         for i1, button in enumerate(buttons):
@@ -85,35 +111,22 @@ def pre_play(screen, options_menu):
                                                 SQ_SIZE * MAP_SIZE + x * SQ_SIZE + SQ_SIZE * 0.5,
                                                 y * SQ_SIZE + SQ_SIZE))
                                         player.ships.pop(i1)
-
-                screen.fill(GREY)
-                # draw_grid search grids
-                search_grid1 = Grid(screen=screen, player=None)
-                search_grid2 = Grid(screen=screen, player=None,
-                                    left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
-                                    top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
-                search_grid1.draw_grid()
-                search_grid2.draw_grid()
-                # draw_grid buttons
-                for button in buttons:
-                    button.update(screen)
-                # draw_grid position grids
-                position_grid1 = Grid(screen=screen, player=game.player1,
-                                      top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
-                position_grid2 = Grid(screen=screen, player=game.player2,
-                                      left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
-                position_grid1.draw_grid()
-                position_grid2.draw_grid()
-
-                # draw_grid ships onto position grids
-                position_grid1.draw_ships()
+                draw_board(screen, search_grid1, search_grid2,
+                           position_grid1, position_grid2, buttons)
                 pygame.display.update()
-
     play(screen, game)
 
 
 # function to play game
 def play(screen, game):
+    search_grid1 = Grid(screen=screen, player=game.player1)
+    search_grid2 = Grid(screen=screen, player=game.player2,
+                        left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
+                        top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+    position_grid1 = Grid(screen=screen, player=game.player1,
+                          top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+    position_grid2 = Grid(screen=screen, player=game.player2,
+                          left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
     pause = False
     while True:
         for event in pygame.event.get():
@@ -146,28 +159,11 @@ def play(screen, game):
 
                 # return key to restart the game
                 if event.key == pygame.K_RETURN:
-                    game = Game(game.is_human1, game.is_human2)
+                    game = GameLogic(game.is_human1, game.is_human2)
 
         if not pause:
-            screen.fill(GREY)
-            # draw_grid search grids
-            search_grid1 = Grid(screen=screen, player=game.player1)
-            search_grid2 = Grid(screen=screen, player=game.player2,
-                                left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
-                                top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
-            search_grid1.draw_grid(search=True)
-            search_grid2.draw_grid(search=True)
-            # draw_grid position grids
-            position_grid1 = Grid(screen=screen, player=game.player1,
-                                  top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
-            position_grid2 = Grid(screen=screen, player=game.player2,
-                                  left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
-            position_grid1.draw_grid()
-            position_grid2.draw_grid()
-
-            # draw_grid ships onto position grids
-            position_grid1.draw_ships()
-            position_grid2.draw_ships()
+            draw_board(screen, search_grid1, search_grid2,
+                       position_grid1, position_grid2)
 
             # computer moves
             if not game.over and game.computer_turn:
@@ -183,4 +179,4 @@ def play(screen, game):
             textbox = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
             screen.blit(textbox, (WIDTH // 2.7, HEIGHT // 2.22))
         pygame.time.delay(0)
-        pygame.display.flip()
+        pygame.display.update()
