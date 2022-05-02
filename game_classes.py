@@ -118,6 +118,7 @@ class Player:
         self.search = ['U' for _ in range(MAP_SIZE ** 2)]  # 'U' for unknown
         self.is_human = is_human
         if not self.is_human:
+            print('lala')
             self.place_ships_ai(sizes=SHIPS_SIZES)
             self.indexes = [
                 ind for sub in list(map(lambda x: x.ship_indexes, self.ships))
@@ -149,9 +150,10 @@ class Player:
 
     # place player`s ship onto the board
     def place_ships_ai(self, sizes):
-        for size in sizes:
+        for size in sizes[::-1]:
             placed = False
             while not placed:
+                print("a")
                 # create new ship
                 ship = Battleship(size=size, row=random.randint(0, MAP_SIZE - 1),
                                   col=random.randint(0, MAP_SIZE - 1),
@@ -259,9 +261,9 @@ class GameLogic:
             col = u % MAP_SIZE
             if (row + col) % 2 == 0:
                 checker_board.append(u)
-            if checker_board:
-                self.make_move(random.choice(checker_board))
-                return
+        if checker_board:
+            self.make_move(random.choice(checker_board))
+            return
 
         # random move
         self.random_ai()
@@ -372,6 +374,7 @@ class Board:
         self.used_ship_size_buttons = []
         for i, size in enumerate(SHIPS_SIZES):
             x, y = i % 4, i // 4
+            print(x, y)
             self.ship_size_buttons.append(TumblerButton(pos=(self.search_grid1.right + x * SQ_SIZE + SQ_SIZE // 2,
                                                              self.search_grid1.bottom + y * SQ_SIZE + SQ_SIZE),
                                                         font=get_font(SQ_SIZE), text_input=str(size), base_color=GREY,

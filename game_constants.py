@@ -1,6 +1,6 @@
 TITLE = 'Battleship'
 MAP_SIZE = 11
-SHIPS_SIZES = [5]
+SHIPS_SIZES = [1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5]
 FONT_NAME = 'fresansttf'
 FONT_SIZE = 100
 SQ_SIZE = 30
