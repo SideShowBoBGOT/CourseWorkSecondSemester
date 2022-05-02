@@ -153,7 +153,6 @@ class Player:
         for size in sizes[::-1]:
             placed = False
             while not placed:
-                print("a")
                 # create new ship
                 ship = Battleship(size=size, row=random.randint(0, MAP_SIZE - 1),
                                   col=random.randint(0, MAP_SIZE - 1),
