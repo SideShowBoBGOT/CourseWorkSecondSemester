@@ -1,3 +1,6 @@
+"""
+Модуль, що описує ігрові класи
+"""
 import random
 import inspect
 import sys
@@ -9,6 +12,85 @@ from other_functions import get_font
 
 
 class Grid:
+    """
+    Клас, що використовується для представлення градки
+
+    ...
+
+    Атрибути
+    --------
+
+    screen  :   pygame.display.Surface
+        екран, на який буде намальована градка
+    player  :   Player
+        гравець, який володіє даною градкою
+    left    :   int
+        відступ від лівого боку екрана
+    top     :   int
+        відступ від верху екрана
+
+    Методи
+    ------
+    ********************************************************
+    ********************************************************
+    __init__(self, screen, player, left=0, top=0)
+        Конструктор класу Grid
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) screen - екран
+        3) player - гравець
+        4) top - зміщення догори
+        5) left - зміщення наліво
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def draw_grid(self, search=False)
+        Відображає об'єкт класу на екрані
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) search - поле гравця
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def draw_grid(self, search=False)
+        Відображає об'єкт класу на екрані
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) search - поле гравця
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def check_for_input(self, position)
+        Реєструє нитискання на градку
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) position - позиція миші
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def draw_ships(self)
+        Відображає кораблі
+
+        Аргументи:
+
+        1) self - об'єкт класу
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, screen, player, left=0, top=0):
         self.screen = screen
         self.player = player
@@ -44,7 +126,6 @@ class Grid:
             index = row * MAP_SIZE + col
         return row, col, index
 
-    # function to draw ships onto the position grids
     def draw_ships(self):
         for ship in self.player.ships:
             x = self.left + ship.col * SQ_SIZE + INDENT
@@ -60,6 +141,57 @@ class Grid:
 
 
 class Battleship:
+    """
+    Клас, що представляє корабель
+
+    ...
+
+    Атрибути
+    --------
+
+    row             :   int
+        Рядок, у якому розташовується ніс корабля
+    col             :   int
+        Колонка, у якій розташовується ніс корабля
+    size            :   int
+        Розмір корабля
+    orientation     :   str
+        Оріентація корабля
+    indexes         :   list
+        Список індексів, які займає корабель повністю
+    ship_indexes    :   list
+        Список індексів, які власне займає лише корабель
+
+    Методи
+    ------
+
+    ********************************************************
+    ********************************************************
+    def __init__(self, size, row, col, orientation)
+        Конструктор класу
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) size - розмір
+        3) row - рядок
+        4) col - колонка
+        5) orientation - орієнтація
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def compute_indexes(self)
+        Розраховує розташування корабля
+
+        Аргументи:
+
+        1) self - об'єкт класу
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, size, row, col, orientation):
         self.row = row
         self.col = col
@@ -113,6 +245,57 @@ class Battleship:
 
 
 class Player:
+    """
+    Клас, що представляє гравця
+
+    ...
+
+    Атрибути
+    --------
+
+    is_human    :   bool
+        Значення, чи є гравець людиною
+
+    Методи
+    ------
+    ********************************************************
+    ********************************************************
+    def __init__(self, is_human)
+        Конструктор класу
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) is_human - значення, чи є гравець людиною
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    check_ship(self, ship)
+        Перевіряє, чи є розташування корабля можливим
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) ship - об'єкт класу Battleship
+
+        Повертає:
+
+        possible  : bool
+    ********************************************************
+    ********************************************************
+    def place_ships_ai(self, sizes)
+        Комп'ютер розставляє кораблі
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) sizes - список розмірів кораблів
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, is_human):
         self.ships = []
         self.search = ['U' for _ in range(MAP_SIZE ** 2)]  # 'U' for unknown
@@ -125,7 +308,6 @@ class Player:
                 for ind in sub
             ]
 
-    # check if placement of the ship is possible
     def check_ship(self, ship):
         possible = True
         size = ship.size
@@ -148,27 +330,91 @@ class Player:
                 break
         return possible
 
-    # place player`s ship onto the board
     def place_ships_ai(self, sizes):
-        for size in sizes[::-1]:
-            placed = False
-            while not placed:
-                # create new ship
-                ship = Battleship(size=size, row=random.randint(0, MAP_SIZE - 1),
-                                  col=random.randint(0, MAP_SIZE - 1),
-                                  orientation=random.choice(["h", "v"]))
-                # place the ship
-                if self.check_ship(ship):
-                    self.ships.append(ship)
-                    placed = True
-
-    def show_ships(self):
-        indexes = ['-' if i not in self.indexes else 'X' for i in range(MAP_SIZE ** 2)]
-        for row in range(MAP_SIZE):
-            print(' '.join(indexes[(row - 1) * MAP_SIZE:row * MAP_SIZE]))
+        all_placed = False
+        while not all_placed:
+            for size in sizes[::-1]:
+                placed = False
+                counter = 0
+                while not placed:
+                    # create new ship
+                    ship = Battleship(size=size, row=random.randint(0, MAP_SIZE - 1),
+                                      col=random.randint(0, MAP_SIZE - 1),
+                                      orientation=random.choice(["h", "v"]))
+                    # place the ship
+                    if self.check_ship(ship):
+                        self.ships.append(ship)
+                        placed = True
+                    counter += 1
+                    if counter > 100:
+                        break
+                if not placed:
+                    self.ships.clear()
+                    break
+            if self.ships:
+                all_placed = True
 
 
 class GameLogic:
+    """
+    Клас, що представляє об'єкт ігрової логіки
+
+    ...
+
+    Атрибути
+    --------
+
+    player1         :   Player
+        Перший гравець
+    player2         :   Player
+        Другий гравець
+    player1_turn    :   bool
+        Значення, чи ходить перший гравець на даному ході
+    computer_turn   :   bool
+        Значення, чи ходить комп'ютер на даному ході
+    over            :   bool
+        Значення, чи закінчена гра
+    result          :   int
+        Значення, який гравець переміг
+
+    Методи
+    ------
+    ********************************************************
+    ********************************************************
+    def __init__(self, is_human1, is_human2)
+        Конструктор класу
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) is_human1 - значення, чи є гравець 1 людиною
+        3) is_human2 - значення, чи є гравець 2 людиною
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def make_move(self, i)
+        Робить хід
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) I - індекс клітинки
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def computer_algorithm(self)
+        Комп'ютер ходить по клітинці
+
+        Аргументи:
+
+        1) self - об'єкт класу
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, is_human1, is_human2):
         self.player1 = Player(is_human1)
         self.player2 = Player(is_human2)
@@ -181,10 +427,10 @@ class GameLogic:
         player = self.player1 if self.player1_turn else self.player2
         opponent = self.player2 if self.player1_turn else self.player1
         hit = False
-        # check if square had been marked as "H","S" or "M" before the click
+
         if player.search[i] != 'U':
             hit = True
-        # set miss "M" or hit "H" and "S" for sunken ship
+
         elif i in opponent.indexes:
             player.search[i] = 'H'
             hit = True
@@ -215,60 +461,133 @@ class GameLogic:
         if not hit:
             self.player1_turn = not self.player1_turn
 
-            # switch between human and computer turns
             if (self.player1.is_human and not self.player2.is_human) or (
                     not self.player1.is_human and self.player2.is_human):
                 self.computer_turn = not self.computer_turn
 
-    def random_ai(self):
-        search = self.player1.search if self.player1_turn else self.player2.search
-        unknown = [i for i, square in enumerate(search) if square == 'U']
-        if unknown:
-            random_index = random.choice(unknown)
-            self.make_move(random_index)
+    def computer_algorithm(self):
 
-    def basic_ai(self):
-
-        # setup
         search = self.player1.search if self.player1_turn else self.player2.search
         unknown = [i for i, square in enumerate(search) if square == 'U']
         hits = [i for i, square in enumerate(search) if square == 'H']
 
-        # search in neighbourhood of hits
-        unknown_with_neighbouring_hits1 = []
-        unknown_with_neighbouring_hits2 = []
+        neighbours1 = []
+        neighbours2 = []
         for u in unknown:
             if u + 1 in hits or u - 1 in hits or u - MAP_SIZE in hits or u + MAP_SIZE in hits:
-                unknown_with_neighbouring_hits1.append(u)
+                neighbours1.append(u)
             if u + 2 in hits or u - 2 in hits or u - MAP_SIZE * 2 in hits or u + MAP_SIZE * 2 in hits:
-                unknown_with_neighbouring_hits2.append(u)
-        # pick "U" square with direct and level-2-neighbour both marked as "H"
+                neighbours2.append(u)
+
+        is_both_neighbour = False
         for u in unknown:
-            if u in unknown_with_neighbouring_hits1 and u in unknown_with_neighbouring_hits2:
+            if u in neighbours1 and u in neighbours2:
+                is_both_neighbour = True
                 self.make_move(u)
-                return
+                break
+        if not is_both_neighbour:
 
-        # pick square that has neighbour marked as "H"
-        if unknown_with_neighbouring_hits1:
-            self.make_move(random.choice(unknown_with_neighbouring_hits1))
-            return
-
-        # checker board pattern
-        checker_board = []
-        for u in unknown:
-            row = u // MAP_SIZE
-            col = u % MAP_SIZE
-            if (row + col) % 2 == 0:
-                checker_board.append(u)
-        if checker_board:
-            self.make_move(random.choice(checker_board))
-            return
-
-        # random move
-        self.random_ai()
+            if neighbours1:
+                self.make_move(random.choice(neighbours1))
+            else:
+                # checker board pattern
+                checker_board = []
+                for u in unknown:
+                    row = u // MAP_SIZE
+                    col = u % MAP_SIZE
+                    if (row + col) % 2 == 0:
+                        checker_board.append(u)
+                if checker_board:
+                    self.make_move(random.choice(checker_board))
+                else:
+                    if unknown:
+                        random_index = random.choice(unknown)
+                        self.make_move(random_index)
+        return
 
 
 class Button:
+    """
+    Клас, що представляє кнопку
+
+    ...
+
+    Атрибути
+    --------
+    x               :   int
+        Позиція кнопки по горизонталі
+    y               :   int
+        Позиція кнопки по вертикалі
+    font            :   pygame.Font
+        Шрифт тексту
+    base_color      :   tuple
+        Базовий колір кнопки
+    hovering_color  :   tuple
+        Другорядний колір кнопки
+    text_input      :   str
+        Текст кнопки
+    text            :   pygame.SysFont
+        Власне рендерений текст кнопки
+    text_rect       :   pygame.Rect
+        Прямокутник тексту
+    func            :   FunctionType
+        Функція, прив'язана до кнопки
+
+    Методи
+    ------
+
+    ********************************************************
+    ********************************************************
+    def __init__(self, pos, font, text_input, base_color, hovering_color, func)
+        Конструктор класу
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) pos - позиція миші
+        3) font - шрифт тексту
+        4) text_input - текст кнопки
+        5) base_color - основний колір
+        6) hovering_color - другорядний колір
+        7) func - функція
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def update(self, screen)
+        Відображає об'єкт класу на екрані
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) screen - екран
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def check_for_input(self, position)
+        Відображає об'єкт класу на екрані
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) position - позиція миші
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def change_color(self, position)
+        Змінює колір при наведенні
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) position - позиція миші
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, pos, font, text_input, base_color, hovering_color, func):
         self.x = pos[0]
         self.y = pos[1]
@@ -299,6 +618,93 @@ class Button:
 
 
 class TumblerButton(Button):
+    """
+    Клас, що представляє кнопку-тумблер
+
+    ...
+
+    Батьки класу
+    ------------
+    Button
+
+    Атрибути
+    --------
+    x               :   int
+        Позиція кнопки по горизонталі
+    y               :   int
+        Позиція кнопки по вертикалі
+    font            :   pygame.Font
+        Шрифт тексту
+    base_color      :   tuple
+        Базовий колір кнопки
+    hovering_color  :   tuple
+        Другорядний колір кнопки
+    text_input      :   str
+        Текст кнопки
+    text            :   pygame.SysFont
+        Власне рендерений текст кнопки
+    text_rect       :   pygame.Rect
+        Прямокутник тексту
+    func            :   FunctionType
+        Функція, прив'язана до кнопки
+    switched        :   bool
+        Значення, чи є кнопка-тумблер увімкненою
+
+    Методи
+    ------
+
+    ********************************************************
+    ********************************************************
+    def __init__(self, pos, font, text_input, base_color, hovering_color, func)
+        Конструктор класу
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) pos - позиція миші
+        3) font - шрифт тексту
+        4) text_input - текст кнопки
+        5) base_color - основний колір
+        6) hovering_color - другорядний колір
+        7) func - функція
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def update(self, screen)
+        Відображає об'єкт класу на екрані
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) screen - екран
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def check_for_input(self, position)
+        Відображає об'єкт класу на екрані
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) position - позиція миші
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def change_color(self, position)
+        Змінює колір при наведенні
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) position - позиція миші
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, pos, font, text_input, base_color, hovering_color, func):
         Button.__init__(self, pos, font, text_input, base_color, hovering_color, func)
         self.switched = False
@@ -311,6 +717,54 @@ class TumblerButton(Button):
 
 
 class Menu:
+    """
+    Клас, що представляє меню
+
+    ...
+
+    Атрибути
+    --------
+
+    screen : pygame.display.Surface
+        Екран, на якому малюється меню
+    text : pygame.SysFont
+        Текст меню
+    rect    : pygame.Rect
+        Прямокутник тексту
+    buttons : list
+        Список кнопок меню
+
+    Методи
+    ------
+
+    ********************************************************
+    ********************************************************
+    def __init__(self, screen, text, buttons, funcs)
+        Конструктор класу
+
+        Аргументи:
+
+        1) self -об'єкт класу
+        2) screen - екран
+        3) text - основний текст
+        4) buttons - об'єкти класу Buttons
+        5) funcs - функції до кнопок
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def draw(self, **kwargs)
+        Відображає об'єкт класу на екрані
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) **kwargs - словник назв кнопок та їх функцій
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, screen, text, buttons, funcs):
         self.screen = screen
         self.text = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
@@ -354,6 +808,86 @@ class Menu:
 
 
 class Board:
+    """
+    Клас, що представляє дошку
+
+    ...
+
+    Атрибути
+    --------
+
+    screen                      :   pygame.Surface
+        Екран, на який малюється дошка
+    game_logic                  :   GameLogic
+        Об'єкт ігрової логіки
+    options_menu                :   Menu
+        Об'єкт меню опцій
+    search_grid1                :   Grid
+        Пошукова градка першого гравця
+    search_grid2                :    Grid
+        Пошукова градка другого гравця
+    position_grid1              :   Grid
+        Позиційна градка першого гравця
+    position_grid2              :    Grid
+        Позиційна градка другого гравця
+    set_ships_button            :   TumblerButton
+        Кнопка дя закінчення розставлення кораблів
+    ship_size_buttons           :   list
+        Кнопки, які позначають кораблі
+    used_ship_size_buttons      :   list
+        Використані кнопки, що позначають кораблі
+
+    Методи
+    ------
+
+    ********************************************************
+    ********************************************************
+    def __init__(self, screen, text, buttons, funcs)
+        Конструктор класу
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) screen - екран
+        3) options_menu - об'єкт класу Menu
+        4) game_logic - об'єкт класу GameLogic
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    draw(self, draw_buttons)
+        Відображає дошку на екрані
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) draw_buttons - значення, чи треба відображати об'єкти класу Button
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def check_for_input(self, position, player1_turn)
+        Реєструє нитискання на дошку
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) position - позиція миші
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def order_buttons(self)
+        Розташовує кнопки у правильному порядку
+
+        Аргументи:
+
+        1) self - об'єкт класу
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, screen, options_menu, game_logic):
         self.screen = screen
         self.game_logic = game_logic
@@ -435,6 +969,61 @@ class Board:
 
 
 class Game:
+    """
+    Клас, що представляє гру
+
+    ...
+
+    Атрибут
+    -------
+
+    screen          : pygame.Surface
+        Екран, на який малюються об'єкти гри
+    options_menu    : Menu
+        Об'єкт меню опцій
+    game_logic      : GameLogic
+        Об'єкт ігрової логіки
+    board           : Board
+        Об'єкт дошки
+
+    Мутоди
+    ------
+
+    ********************************************************
+    ********************************************************
+    def __init__(self, screen, options_menu)
+        Розташовує кнопки у правильному порядку
+
+        Аргументи:
+
+        1) self - об'єкт класу
+        2) sceen - екран
+        3) options_menu - об'єкт класу Menu
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def prepare_to_play(self)
+        Підготовує гру до початку
+
+        Аргументи:
+
+        1) self - об'єкт класу
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    def play(self)
+        Підготовує гру до початку
+
+        Аргументи:
+
+        1) self - об'єкт класу
+
+        Повертає: None
+    ********************************************************
+    ********************************************************
+    """
     def __init__(self, screen, options_menu):
         self.screen = screen
         self.options_menu = options_menu
@@ -551,7 +1140,7 @@ class Game:
                 self.board.draw(draw_buttons=False)
                 # computer moves
                 if not self.game_logic.over and self.game_logic.computer_turn:
-                    self.game_logic.basic_ai()
+                    self.game_logic.computer_algorithm()
 
                 # game over message
                 if self.game_logic.over:

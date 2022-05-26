@@ -1,3 +1,7 @@
+"""
+Основний файл, у якому створюються усі об'єкти
+та ініціалізуються налаштування гри
+"""
 import pygame
 from game_constants import TITLE, WIDTH, HEIGHT
 from game_classes import Button, TumblerButton, Menu, Game

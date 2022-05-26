@@ -2419,23 +2419,6 @@
 										},
 										{
 											"_type": "UMLOperationView",
-											"_id": "AAAAAAGAgLGm3WJOa4s=",
-											"_parent": {
-												"$ref": "AAAAAAGAgLBhMGEh+NU="
-											},
-											"model": {
-												"$ref": "AAAAAAGAgLGmzWJIVl4="
-											},
-											"font": "Arial;13;0",
-											"left": 981,
-											"top": 343,
-											"width": 206,
-											"height": 13,
-											"text": "+random_ai()",
-											"horizontalAlignment": 0
-										},
-										{
-											"_type": "UMLOperationView",
 											"_id": "AAAAAAGAgLG8wGJqex0=",
 											"_parent": {
 												"$ref": "AAAAAAGAgLBhMGEh+NU="
@@ -2445,10 +2428,10 @@
 											},
 											"font": "Arial;13;0",
 											"left": 981,
-											"top": 358,
+											"top": 343,
 											"width": 206,
 											"height": 13,
-											"text": "+basic_ai()",
+											"text": "+computer_algorithm()",
 											"horizontalAlignment": 0
 										}
 									],
@@ -2456,7 +2439,7 @@
 									"left": 976,
 									"top": 323,
 									"width": 216,
-									"height": 53
+									"height": 38
 								},
 								{
 									"_type": "UMLReceptionCompartmentView",
@@ -6139,7 +6122,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKLUslhmCMw="
 							},
-							"name": "sceen"
+							"name": "sceen",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6147,7 +6131,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKLUslhmCMw="
 							},
-							"name": "player"
+							"name": "player",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6155,7 +6140,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKLUslhmCMw="
 							},
-							"name": "left"
+							"name": "left",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6163,7 +6149,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKLUslhmCMw="
 							},
-							"name": "top"
+							"name": "top",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6171,7 +6158,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKLUslhmCMw="
 							},
-							"name": "right"
+							"name": "right",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6179,7 +6167,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKLUslhmCMw="
 							},
-							"name": "bottom"
+							"name": "bottom",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -6421,7 +6410,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "screen"
+							"name": "screen",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6429,7 +6419,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "game_logic"
+							"name": "game_logic",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6437,7 +6428,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "options_menu"
+							"name": "options_menu",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6445,7 +6437,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "search_grid1"
+							"name": "search_grid1",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6453,7 +6446,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "search_grid2"
+							"name": "search_grid2",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6461,7 +6455,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "position_grid1"
+							"name": "position_grid1",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6469,7 +6464,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "position_grid2"
+							"name": "position_grid2",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6477,7 +6473,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "set_ships_button"
+							"name": "set_ships_button",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6485,7 +6482,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "ship_size_buttons"
+							"name": "ship_size_buttons",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6493,7 +6491,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKVlLVjQQTM="
 							},
-							"name": "used_ship_size_buttons"
+							"name": "used_ship_size_buttons",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -6567,7 +6566,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKg3f1nKbbs="
 							},
-							"name": "screen"
+							"name": "screen",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6575,7 +6575,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKg3f1nKbbs="
 							},
-							"name": "options_menu"
+							"name": "options_menu",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6583,7 +6584,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKg3f1nKbbs="
 							},
-							"name": "game_logic"
+							"name": "game_logic",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6591,7 +6593,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKg3f1nKbbs="
 							},
-							"name": "board"
+							"name": "board",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -6713,7 +6716,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKq9WFrnOJ0="
 							},
-							"name": "screen"
+							"name": "screen",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6721,7 +6725,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKq9WFrnOJ0="
 							},
-							"name": "text"
+							"name": "text",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6729,7 +6734,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKq9WFrnOJ0="
 							},
-							"name": "rect"
+							"name": "rect",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6737,7 +6743,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKq9WFrnOJ0="
 							},
-							"name": "buttons"
+							"name": "buttons",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6745,7 +6752,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKq9WFrnOJ0="
 							},
-							"name": "funcs"
+							"name": "funcs",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -6831,7 +6839,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "x"
+							"name": "x",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6839,7 +6848,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "y"
+							"name": "y",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6847,7 +6857,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "font"
+							"name": "font",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6855,7 +6866,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "base_color"
+							"name": "base_color",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6863,7 +6875,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "hovering_color"
+							"name": "hovering_color",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6871,7 +6884,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "text_input"
+							"name": "text_input",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6879,7 +6893,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "text"
+							"name": "text",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6887,7 +6902,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "text_rect"
+							"name": "text_rect",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -6895,7 +6911,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgKyG9FxhbvE="
 							},
-							"name": "func"
+							"name": "func",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -7020,7 +7037,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "x"
+							"name": "x",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7028,7 +7046,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "y"
+							"name": "y",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7036,7 +7055,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "font"
+							"name": "font",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7044,7 +7064,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "base_color"
+							"name": "base_color",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7052,7 +7073,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "hovering_color"
+							"name": "hovering_color",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7060,7 +7082,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "text_input"
+							"name": "text_input",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7068,7 +7091,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "text"
+							"name": "text",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7076,7 +7100,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "text_rect"
+							"name": "text_rect",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7084,7 +7109,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgK491l5aWFI="
 							},
-							"name": "func"
+							"name": "func",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -7158,7 +7184,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLBhL2EYsAM="
 							},
-							"name": "player1"
+							"name": "player1",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7166,7 +7193,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLBhL2EYsAM="
 							},
-							"name": "player2"
+							"name": "player2",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7174,7 +7202,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLBhL2EYsAM="
 							},
-							"name": "player1_turn"
+							"name": "player1_turn",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7182,7 +7211,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLBhL2EYsAM="
 							},
-							"name": "computer_turn"
+							"name": "computer_turn",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7190,7 +7220,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLBhL2EYsAM="
 							},
-							"name": "over"
+							"name": "over",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7198,7 +7229,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLBhL2EYsAM="
 							},
-							"name": "result"
+							"name": "result",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -7212,19 +7244,11 @@
 						},
 						{
 							"_type": "UMLOperation",
-							"_id": "AAAAAAGAgLGmzWJIVl4=",
-							"_parent": {
-								"$ref": "AAAAAAGAgLBhL2EYsAM="
-							},
-							"name": "random_ai"
-						},
-						{
-							"_type": "UMLOperation",
 							"_id": "AAAAAAGAgLG8s2Jknao=",
 							"_parent": {
 								"$ref": "AAAAAAGAgLBhL2EYsAM="
 							},
-							"name": "basic_ai"
+							"name": "computer_algorithm"
 						}
 					]
 				},
@@ -7328,7 +7352,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLIJ92KGfMQ="
 							},
-							"name": "ships"
+							"name": "ships",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7336,7 +7361,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLIJ92KGfMQ="
 							},
-							"name": "search"
+							"name": "search",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7344,7 +7370,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLIJ92KGfMQ="
 							},
-							"name": "is_human"
+							"name": "is_human",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -7418,7 +7445,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLMkomOpd3Q="
 							},
-							"name": "row"
+							"name": "row",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7426,7 +7454,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLMkomOpd3Q="
 							},
-							"name": "col"
+							"name": "col",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7434,7 +7463,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLMkomOpd3Q="
 							},
-							"name": "size"
+							"name": "size",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7442,7 +7472,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLMkomOpd3Q="
 							},
-							"name": "orientation"
+							"name": "orientation",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7450,7 +7481,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLMkomOpd3Q="
 							},
-							"name": "indexes"
+							"name": "indexes",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -7458,7 +7490,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGAgLMkomOpd3Q="
 							},
-							"name": "ship_indexes"
+							"name": "ship_indexes",
+							"type": ""
 						}
 					],
 					"operations": [
