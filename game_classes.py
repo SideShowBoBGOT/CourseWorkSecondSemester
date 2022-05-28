@@ -434,7 +434,6 @@ class GameLogic:
         elif i in opponent.indexes:
             player.search[i] = 'H'
             hit = True
-            # check if ship is sunk
             for ship in opponent.ships:
                 sunk = True
                 for i in ship.ship_indexes:
@@ -449,7 +448,6 @@ class GameLogic:
         else:
             player.search[i] = "M"
 
-        # check if game is over
         game_over = True
         for i in opponent.indexes:
             if player.search[i] == 'U':
@@ -457,7 +455,6 @@ class GameLogic:
         self.over = game_over
         self.result = 1 if self.player1_turn else 2
 
-        # change the active player
         if not hit:
             self.player1_turn = not self.player1_turn
 
@@ -490,7 +487,6 @@ class GameLogic:
             if neighbours1:
                 self.make_move(random.choice(neighbours1))
             else:
-                # checker board pattern
                 checker_board = []
                 for u in unknown:
                     row = u // MAP_SIZE
