@@ -91,13 +91,62 @@ class Grid:
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, screen, player, left=0, top=0):
-        self.screen = screen
-        self.player = player
-        self.left = left
-        self.top = top
-        self.right = left + MAP_SIZE * SQ_SIZE
-        self.bottom = top + MAP_SIZE * SQ_SIZE
+        self.__screen = screen
+        self.__player = player
+        self.__left = left
+        self.__top = top
+        self.__right = left + MAP_SIZE * SQ_SIZE
+        self.__bottom = top + MAP_SIZE * SQ_SIZE
+
+    @property
+    def screen(self):
+        return self.__screen
+
+    @screen.setter
+    def screen(self, value):
+        self.__screen = value
+
+    @property
+    def player(self):
+        return self.__player
+
+    @player.setter
+    def player(self, value):
+        self.__player = value
+
+    @property
+    def left(self):
+        return self.__left
+
+    @left.setter
+    def left(self, value):
+        self.__left = value
+
+    @property
+    def top(self):
+        return self.__top
+
+    @top.setter
+    def top(self, value):
+        self.__top = value
+
+    @property
+    def right(self):
+        return self.__right
+
+    @right.setter
+    def right(self, value):
+        self.__right = value
+
+    @property
+    def bottom(self):
+        return self.__bottom
+
+    @bottom.setter
+    def bottom(self, value):
+        self.__bottom = value
 
     def draw_grid(self, search=False):
         for i in range(MAP_SIZE ** 2):
@@ -192,13 +241,62 @@ class Battleship:
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, size, row, col, orientation):
-        self.row = row
-        self.col = col
-        self.size = size
-        self.orientation = orientation
-        self.indexes = self.compute_indexes()
-        self.ship_indexes = self.indexes[:size]
+        self.__row = row
+        self.__col = col
+        self.__size = size
+        self.__orientation = orientation
+        self.__indexes = self.compute_indexes()
+        self.__ship_indexes = self.indexes[:size]
+
+    @property
+    def row(self):
+        return self.__row
+
+    @row.setter
+    def row(self, value):
+        self.__row = value
+
+    @property
+    def col(self):
+        return self.__col
+
+    @col.setter
+    def col(self, value):
+        self.__col = value
+
+    @property
+    def size(self):
+        return self.__size
+
+    @size.setter
+    def size(self, value):
+        self.__size = value
+
+    @property
+    def orientation(self):
+        return self.__orientation
+
+    @orientation.setter
+    def orientation(self, value):
+        self.__orientation = value
+
+    @property
+    def indexes(self):
+        return self.__indexes
+
+    @indexes.setter
+    def indexes(self, value):
+        self.__indexes = value
+
+    @property
+    def ship_indexes(self):
+        return self.__ship_indexes
+
+    @ship_indexes.setter
+    def ship_indexes(self, value):
+        self.__ship_indexes = value
 
     def compute_indexes(self):
         start_index = self.row * MAP_SIZE + self.col
@@ -296,17 +394,49 @@ class Player:
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, is_human):
-        self.ships = []
-        self.search = ['U' for _ in range(MAP_SIZE ** 2)]  # 'U' for unknown
-        self.is_human = is_human
+        self.__ships = []
+        self.__search = ['U' for _ in range(MAP_SIZE ** 2)]  # 'U' for unknown
+        self.__is_human = is_human
         if not self.is_human:
-            print('lala')
             self.place_ships_ai(sizes=SHIPS_SIZES)
-            self.indexes = [
+            self.__indexes = [
                 ind for sub in list(map(lambda x: x.ship_indexes, self.ships))
                 for ind in sub
             ]
+
+    @property
+    def ships(self):
+        return self.__ships
+
+    @ships.setter
+    def ships(self, value):
+        self.__ships = value
+
+    @property
+    def search(self):
+        return self.__search
+
+    @search.setter
+    def search(self, value):
+        self.__search = value
+
+    @property
+    def is_human(self):
+        return self.__is_human
+
+    @is_human.setter
+    def is_human(self, value):
+        self.__is_human = value
+
+    @property
+    def indexes(self):
+        return self.__indexes
+
+    @indexes.setter
+    def indexes(self, value):
+        self.__indexes = value
 
     def check_ship(self, ship):
         possible = True
@@ -415,13 +545,62 @@ class GameLogic:
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, is_human1, is_human2):
-        self.player1 = Player(is_human1)
-        self.player2 = Player(is_human2)
-        self.player1_turn = True
-        self.computer_turn = True if not self.player1.is_human else False
-        self.over = False
-        self.result = None
+        self.__player1 = Player(is_human1)
+        self.__player2 = Player(is_human2)
+        self.__player1_turn = True
+        self.__computer_turn = True if not self.player1.is_human else False
+        self.__over = False
+        self.__result = None
+
+    @property
+    def player1(self):
+        return self.__player1
+
+    @player1.setter
+    def player1(self, value):
+        self.__player1 = value
+
+    @property
+    def player2(self):
+        return self.__player2
+
+    @player2.setter
+    def player2(self, value):
+        self.__player2 = value
+
+    @property
+    def player1_turn(self):
+        return self.__player1_turn
+
+    @player1_turn.setter
+    def player1_turn(self, value):
+        self.__player1_turn = value
+
+    @property
+    def computer_turn(self):
+        return self.__computer_turn
+
+    @computer_turn.setter
+    def computer_turn(self, value):
+        self.__computer_turn = value
+
+    @property
+    def over(self):
+        return self.__over
+
+    @over.setter
+    def over(self, value):
+        self.__over = value
+
+    @property
+    def result(self):
+        return self.__result
+
+    @result.setter
+    def result(self, value):
+        self.__result = value
 
     def make_move(self, i):
         player = self.player1 if self.player1_turn else self.player2
@@ -569,7 +748,7 @@ class Button:
         1) self - об'єкт класу
         2) position - позиція миші
 
-        Повертає: None
+        Повертає: bool
     ********************************************************
     ********************************************************
     def change_color(self, position)
@@ -584,17 +763,90 @@ class Button:
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, pos, font, text_input, base_color, hovering_color, func):
-        self.x = pos[0]
-        self.y = pos[1]
-        self.font = font
-        self.base_color = base_color
-        self.hovering_color = hovering_color
-        self.text_input = text_input
-        self.text = self.font.render(self.text_input, False,
-                                     self.base_color, self.hovering_color)
-        self.text_rect = self.text.get_rect(center=(self.x, self.y))
-        self.func = func
+        self.__x = pos[0]
+        self.__y = pos[1]
+        self.__font = font
+        self.__base_color = base_color
+        self.__hovering_color = hovering_color
+        self.__text_input = text_input
+        self.__text = self.__font.render(self.__text_input, False,
+                                         self.__base_color, self.__hovering_color)
+        self.__text_rect = self.text.get_rect(center=(self.__x, self.__y))
+        self.__func = func
+
+    @property
+    def x(self):
+        return self.__x
+
+    @x.setter
+    def x(self, value):
+        self.__x = value
+
+    @property
+    def y(self):
+        return self.__y
+
+    @y.setter
+    def y(self, value):
+        self.__y = value
+
+    @property
+    def font(self):
+        return self.__font
+
+    @font.setter
+    def font(self, value):
+        self.__font = value
+
+    @property
+    def base_color(self):
+        return self.__base_color
+
+    @base_color.setter
+    def base_color(self, value):
+        self.__base_color = value
+
+    @property
+    def hovering_color(self):
+        return self.__hovering_color
+
+    @hovering_color.setter
+    def hovering_color(self, value):
+        self.__hovering_color = value
+
+    @property
+    def text_input(self):
+        return self.__text_input
+
+    @text_input.setter
+    def text_input(self, value):
+        self.__text_input = value
+
+    @property
+    def text(self):
+        return self.__text
+
+    @text.setter
+    def text(self, value):
+        self.__text = value
+
+    @property
+    def text_rect(self):
+        return self.__text_rect
+
+    @text_rect.setter
+    def text_rect(self, value):
+        self.__text_rect = value
+
+    @property
+    def func(self):
+        return self.__func
+
+    @func.setter
+    def func(self, value):
+        self.__func = value
 
     def update(self, screen):
         screen.blit(self.text, self.text_rect)
@@ -701,11 +953,24 @@ class TumblerButton(Button):
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, pos, font, text_input, base_color, hovering_color, func):
         Button.__init__(self, pos, font, text_input, base_color, hovering_color, func)
-        self.switched = False
+        self.__switched = False
 
-    def change_color(self, position):
+    @property
+    def switched(self):
+        return self.__switched
+
+    @switched.setter
+    def switched(self, value):
+        self.__switched = value
+
+    def update(self, screen):
+        self.change_color()
+        screen.blit(self.text, self.text_rect)
+
+    def change_color(self, position=(0, 0)):
         if self.switched:
             self.text = self.font.render(self.text_input, False, self.hovering_color, self.base_color)
         else:
@@ -761,20 +1026,53 @@ class Menu:
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, screen, text, buttons, funcs):
-        self.screen = screen
-        self.text = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
-        self.rect = self.text.get_rect(center=(WIDTH // 2, HEIGHT // 5))
-        self.buttons = []
+        self.__screen = screen
+        self.__text = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
+        self.__rect = self.text.get_rect(center=(WIDTH // 2, HEIGHT // 5))
+        self.__buttons = []
         for button, func in zip(enumerate(buttons), funcs):
-            self.buttons.append(button[1][1](pos=(WIDTH // 2, HEIGHT // 3 + FONT_SIZE * button[0]),
-                                             text_input=button[1][0],
-                                             font=get_font(FONT_SIZE), base_color=WHITE,
-                                             hovering_color=LIGHT_GREY, func=func))
-        self.buttons.append(Button(pos=(WIDTH // 2, HEIGHT // 3 + FONT_SIZE * (button[0] + 1)),
-                                   text_input='QUIT',
-                                   font=get_font(FONT_SIZE), base_color=WHITE,
-                                   hovering_color=LIGHT_GREY, func=None))
+            self.__buttons.append(button[1][1](pos=(WIDTH // 2, HEIGHT // 3 + FONT_SIZE * button[0]),
+                                               text_input=button[1][0],
+                                               font=get_font(FONT_SIZE), base_color=WHITE,
+                                               hovering_color=LIGHT_GREY, func=func))
+        self.__buttons.append(Button(pos=(WIDTH // 2, HEIGHT // 3 + FONT_SIZE * (button[0] + 1)),
+                                     text_input='QUIT',
+                                     font=get_font(FONT_SIZE), base_color=WHITE,
+                                     hovering_color=LIGHT_GREY, func=None))
+
+    @property
+    def screen(self):
+        return self.__screen
+
+    @screen.setter
+    def screen(self, value):
+        self.__screen = value
+
+    @property
+    def text(self):
+        return self.__text
+
+    @text.setter
+    def text(self, value):
+        self.__text = value
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+
+    @property
+    def buttons(self):
+        return self.__buttons
+
+    @buttons.setter
+    def buttons(self, value):
+        self.__buttons = value
 
     def draw(self, **kwargs):
         while True:
@@ -884,30 +1182,118 @@ class Board:
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, screen, options_menu, game_logic):
-        self.screen = screen
-        self.game_logic = game_logic
-        self.options_menu = options_menu
-        self.search_grid1 = Grid(screen=self.screen, player=self.game_logic.player1)
-        self.search_grid2 = Grid(screen=self.screen, player=self.game_logic.player2,
-                                 left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
-                                 top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
-        self.position_grid1 = Grid(screen=self.screen, player=self.game_logic.player1,
+        self.__screen = screen
+        self.__game_logic = game_logic
+        self.__options_menu = options_menu
+        self.__search_grid1 = Grid(screen=self.__screen, player=self.__game_logic.player1)
+        self.__search_grid2 = Grid(screen=self.__screen, player=self.__game_logic.player2,
+                                   left=(WIDTH - H_MARGIN) // 2 + H_MARGIN,
                                    top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
-        self.position_grid2 = Grid(screen=self.screen, player=self.game_logic.player2,
-                                   left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
-        self.set_ships_button = TumblerButton(pos=(WIDTH // 2, SQ_SIZE * MAP_SIZE),
-                                              text_input='SET SHIPS', font=get_font(FONT_SIZE // 3),
-                                              base_color=GREY, hovering_color=WHITE, func=None)
-        self.ship_size_buttons = []
-        self.used_ship_size_buttons = []
+        self.__position_grid1 = Grid(screen=self.__screen, player=self.__game_logic.player1,
+                                     top=(HEIGHT - V_MARGIN) // 2 + V_MARGIN)
+        self.__position_grid2 = Grid(screen=self.__screen, player=self.__game_logic.player2,
+                                     left=(WIDTH - H_MARGIN) // 2 + H_MARGIN)
+        self.__set_ships_button = TumblerButton(pos=(WIDTH // 2, SQ_SIZE * MAP_SIZE),
+                                                text_input='SET SHIPS', font=get_font(FONT_SIZE // 3),
+                                                base_color=GREY, hovering_color=WHITE, func=None)
+        self.__ship_size_buttons = []
+        self.__used_ship_size_buttons = []
         for i, size in enumerate(SHIPS_SIZES):
             x, y = i % 4, i // 4
-            print(x, y)
-            self.ship_size_buttons.append(TumblerButton(pos=(self.search_grid1.right + x * SQ_SIZE + SQ_SIZE // 2,
-                                                             self.search_grid1.bottom + y * SQ_SIZE + SQ_SIZE),
-                                                        font=get_font(SQ_SIZE), text_input=str(size), base_color=GREY,
-                                                        hovering_color=WHITE, func=None))
+            self.__ship_size_buttons.append(TumblerButton(pos=(self.__search_grid1.right + x * SQ_SIZE + SQ_SIZE // 2,
+                                                               self.__search_grid1.bottom + y * SQ_SIZE + SQ_SIZE),
+                                                          font=get_font(SQ_SIZE), text_input=str(size), base_color=GREY,
+                                                          hovering_color=WHITE, func=None))
+
+    @property
+    def screen(self):
+        return self.__screen
+
+    @screen.setter
+    def screen(self, value):
+        self.__screen = value
+
+    @property
+    def game_logic(self):
+        return self.__game_logic
+
+    @game_logic.setter
+    def game_logic(self, value):
+        self.__game_logic = value
+
+    @property
+    def game_logic(self):
+        return self.__game_logic
+
+    @game_logic.setter
+    def game_logic(self, value):
+        self.__game_logic = value
+
+    @property
+    def options_menu(self):
+        return self.__options_menu
+
+    @options_menu.setter
+    def options_menu(self, value):
+        self.__options_menu = value
+
+    @property
+    def search_grid1(self):
+        return self.__search_grid1
+
+    @search_grid1.setter
+    def search_grid1(self, value):
+        self.__search_grid1 = value
+
+    @property
+    def search_grid2(self):
+        return self.__search_grid2
+
+    @search_grid2.setter
+    def search_grid2(self, value):
+        self.__search_grid2 = value
+
+    @property
+    def position_grid1(self):
+        return self.__position_grid1
+
+    @position_grid1.setter
+    def position_grid1(self, value):
+        self.__position_grid1 = value
+
+    @property
+    def position_grid2(self):
+        return self.__position_grid2
+
+    @position_grid2.setter
+    def position_grid2(self, value):
+        self.__position_grid2 = value
+
+    @property
+    def set_ships_button(self):
+        return self.__set_ships_button
+
+    @set_ships_button.setter
+    def set_ships_button(self, value):
+        self.__set_ships_button = value
+
+    @property
+    def ship_size_buttons(self):
+        return self.__ship_size_buttons
+
+    @ship_size_buttons.setter
+    def ship_size_buttons(self, value):
+        self.__ship_size_buttons = value
+
+    @property
+    def used_ship_size_buttons(self):
+        return self.__used_ship_size_buttons
+
+    @used_ship_size_buttons.setter
+    def used_ship_size_buttons(self, value):
+        self.__used_ship_size_buttons = value
 
     def draw(self, draw_buttons):
         self.screen.fill(GREY)
@@ -1020,88 +1406,89 @@ class Game:
     ********************************************************
     ********************************************************
     """
+
     def __init__(self, screen, options_menu):
-        self.screen = screen
-        self.options_menu = options_menu
-        self.game_logic = None
-        self.board = None
+        self.__screen = screen
+        self.__options_menu = options_menu
+        self.__game_logic = None
+        self.__board = None
 
     def prepare_to_play(self):
-        # set game_logic and board for game
-        self.game_logic = GameLogic(self.options_menu.buttons[0].switched,
-                                    self.options_menu.buttons[1].switched)
-        self.board = Board(self.screen, self.options_menu, self.game_logic)
-        # check if player is human
-        for player_number, player in enumerate((self.game_logic.player1, self.game_logic.player2)):
-            # if human then player must place its ships onto the board
+        self.__game_logic = GameLogic(self.__options_menu.buttons[0].switched,
+                                      self.__options_menu.buttons[1].switched)
+        self.__board = Board(self.__screen, self.__options_menu, self.__game_logic)
+        for player_number, player in enumerate((self.__game_logic.player1, self.__game_logic.player2)):
             if player.is_human:
-                # while all player`s ships are not placed, it can not start game
-                while not self.board.set_ships_button.switched:
+                self.__board.order_buttons()
+                while not self.__board.set_ships_button.switched:
                     placing_ships = False
                     GAME_MOUSE_POSITION = pygame.mouse.get_pos()
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
                             pygame.quit()
                             sys.exit()
-                        # escape key to close the animation
+
                         if event.type == pygame.K_ESCAPE:
                             return
                         if event.type == pygame.MOUSEBUTTONDOWN:
-                            # click on ship_size_buttons and chose size of a ship
-                            for i1, button in enumerate(self.board.ship_size_buttons):
+
+                            for i1, button in enumerate(self.__board.ship_size_buttons):
                                 if button.check_for_input(GAME_MOUSE_POSITION):
                                     button.switched = not button.switched
-                                    button.change_color(GAME_MOUSE_POSITION)
-                                    for i2, other_button in enumerate(self.board.ship_size_buttons):
+                                    for i2, other_button in enumerate(self.__board.ship_size_buttons):
                                         if i2 != i1:
                                             other_button.switched = False
-                                            other_button.change_color(GAME_MOUSE_POSITION)
                                     break
-                            # chose square to put ship onto
-                            for i1, button in enumerate(self.board.ship_size_buttons):
+
+                            for i1, button in enumerate(self.__board.ship_size_buttons):
                                 if button.switched:
                                     placing_ships = True
-                                    row, col, index = self.board.__dict__[f'position_grid{player_number + 1}']. \
-                                        check_for_input(GAME_MOUSE_POSITION)
+                                    if player_number + 1 == 1:
+                                        row, col, index = self.__board.position_grid1.check_for_input(
+                                            GAME_MOUSE_POSITION)
+                                    elif player_number + 1 == 2:
+                                        row, col, index = self.__board.position_grid2.check_for_input(
+                                            GAME_MOUSE_POSITION)
                                     if index is not None:
                                         orientation = 'h' if pygame.mouse.get_pressed()[0] else 'v'
                                         ship = Battleship(size=int(button.text_input), row=row,
                                                           col=col, orientation=orientation)
                                         if player.check_ship(ship):
                                             player.ships.append(ship)
-                                            self.board.used_ship_size_buttons. \
-                                                append(self.board.ship_size_buttons.pop(i1))
-                                            self.board.order_buttons()
+                                            self.__board.used_ship_size_buttons. \
+                                                append(self.__board.ship_size_buttons.pop(i1))
+                                            self.__board.order_buttons()
 
-                            # chose ship to be replaced
                             if not placing_ships:
                                 for i1, ship in enumerate(player.ships):
-                                    row, col, index = self.board.__dict__[f'position_grid{player_number + 1}']. \
-                                        check_for_input(GAME_MOUSE_POSITION)
+                                    if player_number + 1 == 1:
+                                        row, col, index = self.__board.position_grid1.check_for_input(
+                                            GAME_MOUSE_POSITION)
+                                    elif player_number + 1 == 2:
+                                        row, col, index = self.__board.position_grid2.check_for_input(
+                                            GAME_MOUSE_POSITION)
                                     if index in ship.ship_indexes:
-                                        for i2, used_button in enumerate(self.board.used_ship_size_buttons):
+                                        for i2, used_button in enumerate(self.__board.used_ship_size_buttons):
                                             if ship.size == int(used_button.text_input):
                                                 used_button.switched = False
-                                                used_button.change_color(GAME_MOUSE_POSITION)
-                                                self.board.ship_size_buttons. \
-                                                    append(self.board.used_ship_size_buttons.pop(i2))
+                                                self.__board.ship_size_buttons. \
+                                                    append(self.__board.used_ship_size_buttons.pop(i2))
                                                 break
-                                        self.board.order_buttons()
+                                        self.__board.order_buttons()
                                         player.ships.pop(i1)
 
-                            # check if set_button is pressed
-                            if self.board.set_ships_button.check_for_input(GAME_MOUSE_POSITION) \
-                                    and not self.board.ship_size_buttons:
-                                self.board.set_ships_button.switched = not self.board.set_ships_button.switched
+                            if self.__board.set_ships_button.check_for_input(GAME_MOUSE_POSITION) \
+                                    and not self.__board.ship_size_buttons:
+                                self.__board.set_ships_button.switched = not self.__board.set_ships_button.switched
 
-                    self.board.draw(draw_buttons=True)
+                    self.__board.draw(draw_buttons=True)
                     pygame.display.update()
 
-                self.board.ship_size_buttons, self.board.used_ship_size_buttons = \
-                    self.board.used_ship_size_buttons, self.board.ship_size_buttons
-
-                self.board.set_ships_button.switched = not self.board.set_ships_button.switched
-                # player`s ships being placed, program sets player`s indexes
+                self.__board.ship_size_buttons, self.__board.used_ship_size_buttons = \
+                    self.__board.used_ship_size_buttons, self.__board.ship_size_buttons
+                for button in self.__board.ship_size_buttons:
+                    button.switched = not button.switched
+                self.__board.set_ships_button.switched = not self.__board.set_ships_button.switched
                 player.indexes = [
                     ind for sub in list(map(lambda x: x.ship_indexes, player.ships))
                     for ind in sub
@@ -1116,36 +1503,33 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-                # user mouse clicks
                 if event.type == pygame.MOUSEBUTTONDOWN and not pause:
                     mouse_pos = pygame.mouse.get_pos()
-                    if not self.game_logic.over:
-                        row, col, index = self.board.check_for_input(mouse_pos, self.game_logic.player1_turn)
+                    if not self.__game_logic.over:
+                        row, col, index = self.__board.check_for_input(mouse_pos, self.__game_logic.player1_turn)
                         if index is not None:
-                            self.game_logic.make_move(index)
+                            self.__game_logic.make_move(index)
                 if event.type == pygame.KEYDOWN:
 
-                    # escape key to close the animation
                     if event.key == pygame.K_ESCAPE:
                         return
-                    # space bar to pause and unpause the animation
-                    if event.key == pygame.K_SPACE and not self.game_logic.over:
+
+                    if event.key == pygame.K_SPACE and not self.__game_logic.over:
                         pause = not pause
 
             if not pause:
-                self.board.draw(draw_buttons=False)
-                # computer moves
-                if not self.game_logic.over and self.game_logic.computer_turn:
-                    self.game_logic.computer_algorithm()
+                self.__board.draw(draw_buttons=False)
 
-                # game over message
-                if self.game_logic.over:
-                    text = "Player " + str(self.game_logic.result) + " wins!"
+                if not self.__game_logic.over and self.__game_logic.computer_turn:
+                    self.__game_logic.computer_algorithm()
+
+                if self.__game_logic.over:
+                    text = "Player " + str(self.__game_logic.result) + " wins!"
                     textbox = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
-                    self.screen.blit(textbox, (WIDTH // 5, HEIGHT // 2.22))
-            elif pause and not self.game_logic.over:
+                    self.__screen.blit(textbox, (WIDTH // 5, HEIGHT // 2.22))
+            elif pause and not self.__game_logic.over:
                 text = "Pause"
                 textbox = get_font(FONT_SIZE).render(text, False, GREY, WHITE)
-                self.screen.blit(textbox, (WIDTH // 2.7, HEIGHT // 2.22))
+                self.__screen.blit(textbox, (WIDTH // 2.7, HEIGHT // 2.22))
             pygame.time.delay(0)
             pygame.display.update()
