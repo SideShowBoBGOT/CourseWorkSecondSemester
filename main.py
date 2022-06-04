@@ -4,7 +4,10 @@
 """
 import pygame
 from game_constants import TITLE, WIDTH, HEIGHT
-from game_classes import Button, TumblerButton, Menu, Game
+from Game import Game
+from Button import Button
+from TumblerButton import TumblerButton
+from Menu import Menu
 
 pygame.init()
 pygame.font.init()
